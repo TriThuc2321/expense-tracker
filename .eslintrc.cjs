@@ -40,5 +40,6 @@ module.exports = {
         'react/no-array-index-key': 0,
         'implicit-arrow-linebreak': 0,
         'eslint-disable-next-line': 0,
+        '@typescript-eslint/no-explicit-any': 0,
     },
 };

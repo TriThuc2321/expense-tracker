@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import reactLogo from './assets/react.svg';
+import { useStore } from './store/hooks';
+import reactLogo from '@/assets/react.svg';
 import './App.css';
 
 function App() {
     const [count, setCount] = useState(0);
-
+    const [state, dispatch] = useStore();
+    console.log(state);
     return (
         <div className="App">
             <div>
