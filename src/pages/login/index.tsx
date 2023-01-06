@@ -17,10 +17,12 @@ function Login() {
     }, []);
 
     return (
-        <div className="App">
-            <h1>Expense tracker</h1>
-            <p>Beware of little expenses. A small leak will sink a great ship.</p>
-            <div id="signInDiv"></div>
+        <div className="flex justify-center items-center w-screen h-screen">
+            <div className="w-1/3 px-6 py-8 bg-primary">
+                <h1>Expense tracker</h1>
+                <p className="mt-2">Beware of little expenses. A small leak will sink a great ship.</p>
+                <div className="mt-6" id="signInDiv"></div>
+            </div>
         </div>
     );
 }
