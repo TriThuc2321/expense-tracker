@@ -1,9 +1,25 @@
+import { Outlet, createBrowserRouter } from 'react-router-dom';
 import { Home, Login } from '~/pages';
-import routesConfig from '~/configs/routes';
+import { StoreProvider } from '~/store/storeProvider';
 
-const routes = [
-    { path: routesConfig.home, component: Home },
-    { path: routesConfig.login, component: Login },
-];
+const AuthLayout = () => (
+    <StoreProvider>
+        <Outlet />
+    </StoreProvider>
+);
 
-export { routes };
+export default createBrowserRouter([
+    {
+        element: <AuthLayout />,
+        children: [
+            {
+                element: <Login />,
+                path: '/login',
+            },
+            {
+                element: <Home />,
+                path: '/',
+            },
+        ],
+    },
+]);
