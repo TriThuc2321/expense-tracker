@@ -4,7 +4,7 @@ import { IStore, IUser } from '~/interfaces/user';
 import { storeReducer, EStoreAction } from './storeReducer';
 import { getAuth } from 'firebase/auth';
 
-import { Loader } from '~/components';
+import { Loader } from '~/pages';
 import { useNavigate } from 'react-router-dom';
 
 interface ProviderProps {
@@ -34,6 +34,7 @@ export const StoreProvider = ({ children }: ProviderProps) => {
     };
 
     useEffect(() => {
+        //  auth.signOut();
         const authHandle = auth.onIdTokenChanged((user: any) => {
             if (user?.uid) {
                 const { uid, displayName, email, photoURL } = user;

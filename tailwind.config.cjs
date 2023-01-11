@@ -3,6 +3,7 @@ module.exports = {
     theme: {
         colors: {
             primary: '#1B1C31',
+            white: '#fff',
         },
     },
     plugins: [],
