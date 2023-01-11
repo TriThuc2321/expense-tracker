@@ -1,6 +1,7 @@
 import { Outlet, createBrowserRouter } from 'react-router-dom';
-import { Home, Login } from '~/pages';
+import { Home, Login, Error } from '~/pages';
 import { StoreProvider } from '~/store/storeProvider';
+import { Dashboard, Notification, Statistic } from '~/components';
 
 const AuthLayout = () => (
     <StoreProvider>
@@ -11,6 +12,7 @@ const AuthLayout = () => (
 export default createBrowserRouter([
     {
         element: <AuthLayout />,
+        errorElement: <Error />,
         children: [
             {
                 element: <Login />,
@@ -19,6 +21,20 @@ export default createBrowserRouter([
             {
                 element: <Home />,
                 path: '/',
+                children: [
+                    {
+                        element: <Dashboard />,
+                        path: '/',
+                    },
+                    {
+                        element: <Notification />,
+                        path: '/notification',
+                    },
+                    {
+                        element: <Statistic />,
+                        path: '/statistic',
+                    },
+                ],
             },
         ],
     },
