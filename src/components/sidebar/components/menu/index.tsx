@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '~/store/hooks';
-import { ArrowRightOnRectangleIcon, BanknotesIcon } from '@heroicons/react/24/outline';
+import { CodeBracketIcon, BellIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 import clsx from 'clsx';
 import styles from './Menu.module.scss';
@@ -12,16 +12,19 @@ export default function Menu() {
             id: '0',
             name: 'Dashboard',
             path: '/',
+            icon: <CodeBracketIcon className="h-6 w-6" />,
         },
         {
             id: '1',
             name: 'Notification',
             path: '/notification',
+            icon: <BellIcon className="h-6 w-6" />,
         },
         {
             id: '2',
             name: 'Statistic',
             path: '/statistic',
+            icon: <ChartBarIcon className="h-6 w-6" />,
         },
     ];
 
@@ -33,14 +36,15 @@ export default function Menu() {
             <p className="my-2 px-3 py-1 cursor-pointer">Workspace</p>
             {listMenu.map((menu) => (
                 <Link key={menu.id} to={menu.path} onClick={() => setActiveMenu(menu.path)}>
-                    <p
+                    <div
                         className={clsx(
                             { [styles.selected]: menu.path === activeMenu },
-                            'my-2 px-3 py-1 cursor-pointer text-white',
+                            'my-2 px-4 py-2 cursor-pointer text-white flex items-center',
                         )}
                     >
-                        {menu.name}
-                    </p>
+                        {menu.icon}
+                        <p className="ml-4">{menu.name}</p>
+                    </div>
                 </Link>
             ))}
         </div>
