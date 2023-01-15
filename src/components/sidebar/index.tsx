@@ -5,7 +5,7 @@ import { Menu, Footer } from './components';
 
 export default function Sidebar() {
     return (
-        <div className="bg-primary w-80 h-full p-6">
+        <div className="bg-primary min-w-max h-screen p-6">
             <div
                 className=" flex justify-center items-center cursor-pointer w-full"
                 onClick={() => {

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { IStore, IUser } from '~/interfaces/user';
+import { IStore, IUser } from '~/interfaces';
 
 export type StoreContextPros = {
     store: IStore;

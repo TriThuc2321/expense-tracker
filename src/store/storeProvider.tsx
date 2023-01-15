@@ -1,6 +1,6 @@
 import { StoreContext } from './storeContext';
 import { ReactNode, useReducer, useEffect, useState } from 'react';
-import { IStore, IUser } from '~/interfaces/user';
+import { IStore, IUser } from '~/interfaces';
 import { storeReducer, EStoreAction } from './storeReducer';
 import { getAuth } from 'firebase/auth';
 
