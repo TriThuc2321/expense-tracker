@@ -272,7 +272,7 @@ const bills: Array<IBill> = [
     },
 
     {
-        id: '8',
+        id: '7',
         user,
         total: 230000,
         createAt: '12-02-2023',
@@ -311,7 +311,7 @@ const bills: Array<IBill> = [
         ],
     },
     {
-        id: '1',
+        id: '8',
         user,
         total: 230000,
         createAt: '12-02-2023',

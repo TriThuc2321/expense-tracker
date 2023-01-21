@@ -1,0 +1,19 @@
+.button {
+    background-color: #1b1c31;
+    color: white;
+    padding: 4px 16px;
+    min-width: 80px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.outline {
+    background-color: transparent;
+    border: #1b1c31 1px solid;
+    color: #1b1c31;
+}
+
+.outline:hover {
+    background-color: #1b1c31;
+    color: white;
+}

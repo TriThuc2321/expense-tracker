@@ -6,8 +6,10 @@ module.exports = {
         colors: {
             primary: '#1B1C31',
             white: '#fff',
+            black: '#000',
             unselected: '#6F767E',
             slate: colors.slate,
+            gray: colors.gray,
         },
         extend: {
             height: {

@@ -5,7 +5,7 @@ import ProductDetail from './../productDetail/index';
 
 export default function BillDetail(billDetail: IBill) {
     return (
-        <div className="cursor-pointer relative px-4 py-2 overflow-hidden w-6/6 h-72 bg-white text-primary drop-shadow-[0_3px_3px_rgba(255,255,255,0.25)] rounded-md">
+        <div className="cursor-pointer relative px-4 py-2 overflow-hidden w-6/6 h-72 bg-gray-200 text-primary drop-shadow-[0_3px_3px_rgba(255,255,255,0.25)] rounded-md">
             <ProductSection productType="generals" billDetail={billDetail} />
             <ProductSection productType="specifics" billDetail={billDetail} />
 
