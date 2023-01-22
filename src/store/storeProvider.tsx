@@ -1,19 +1,19 @@
-import { StoreContext } from './storeContext';
 import { ReactNode, useReducer, useEffect, useState } from 'react';
-import { IStore, IUser } from '~/interfaces';
-import { storeReducer, EStoreAction } from './storeReducer';
 import { getAuth } from 'firebase/auth';
-
-import { Loader } from '~/pages';
 import { useNavigate } from 'react-router-dom';
+
+import { StoreContext } from './storeContext';
+import { IStore, IUser } from '~/interfaces';
+import { Loader } from '~/pages';
+import { storeReducer, EStoreAction } from './storeReducer';
 
 interface ProviderProps {
     children: ReactNode;
 }
 
 const INIT_USER: IUser = {
-    id: '',
-    name: '',
+    userId: '',
+    fullName: '',
     picture: '',
     email: '',
 };
@@ -38,9 +38,10 @@ export const StoreProvider = ({ children }: ProviderProps) => {
         const authHandle = auth.onIdTokenChanged((user: any) => {
             if (user?.uid) {
                 const { uid, displayName, email, photoURL } = user;
+
                 setUser({
-                    name: displayName,
-                    id: uid,
+                    fullName: displayName,
+                    userId: uid,
                     email,
                     picture: photoURL,
                 });
@@ -53,7 +54,6 @@ export const StoreProvider = ({ children }: ProviderProps) => {
                 localStorage.clear();
                 navigate('/login');
             }
-
             setLoading(false);
         });
 

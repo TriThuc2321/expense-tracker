@@ -1,8 +1,8 @@
 interface IUser {
-    id: string;
-    name: string;
-    picture: string;
-    email: string;
+    userId: string;
+    fullName: string | null;
+    picture: string | null;
+    email: string | null;
 }
 
 interface IWorkspace {

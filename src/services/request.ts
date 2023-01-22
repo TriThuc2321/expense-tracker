@@ -1,7 +1,22 @@
 import { BASE_URL } from '~/constants';
 
-export const request = async (url = '', method = 'GET', options = {}, header = {}) => {
+export const METHODS = {
+    GET: 'GET',
+    POST: 'POST',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
+};
+
+export const request = async (url = '', method = METHODS.GET, payload = {}, header = {}) => {
     if (localStorage.getItem('accessToken')) {
+        let body = {};
+
+        if (method != METHODS.GET) {
+            body = {
+                body: JSON.stringify(payload),
+            };
+        }
+
         const res = await fetch(`${BASE_URL}/${url}`, {
             method: method,
             headers: {
@@ -10,7 +25,7 @@ export const request = async (url = '', method = 'GET', options = {}, header = {
                 Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
                 ...header,
             },
-            ...options,
+            ...body,
         });
 
         if (!res.ok) {

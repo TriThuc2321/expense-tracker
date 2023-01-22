@@ -1,6 +1,8 @@
 import { Navigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 
+import { addUser } from '~/services/apis/user';
+
 function Login() {
     const auth = getAuth();
 
@@ -8,11 +10,17 @@ function Login() {
         const provider = new GoogleAuthProvider();
 
         const {
-            user: { uid, displayName },
+            user: { uid, displayName, email, photoURL },
         } = await signInWithPopup(auth, provider);
 
-        console.log('register', uid);
-        console.log('register', displayName);
+        const newUser = {
+            fullName: displayName,
+            userId: uid,
+            email,
+            picture: photoURL,
+        };
+
+        addUser(newUser);
     };
 
     if (localStorage.getItem('accessToken')) {
