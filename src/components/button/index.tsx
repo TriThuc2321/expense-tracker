@@ -4,13 +4,13 @@ import styles from './Button.module.scss';
 
 interface Props {
     text: string;
-    className: string;
-    outline: boolean;
+    className: string | null;
+    outline: boolean | null;
     children?: React.ReactNode;
     onClick: () => void;
 }
 
-const Button: React.FC<Props> = ({ text, outline, className, onClick }) => {
+const Button: React.FC<Props> = ({ text, onClick, outline = false, className = '' }) => {
     return (
         <button
             onClick={onClick}

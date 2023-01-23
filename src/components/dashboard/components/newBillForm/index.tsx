@@ -29,7 +29,7 @@ export default function NewBillForm({ showBillHandle }: NewBillFormProps) {
 
     return (
         <div className="absolute top-0 bottom-0 left-0 right-0 py-20 px-60 text-primary ">
-            <div className="relative bg-white w-full h-full rounded-lg shadow-md p-10 overflow-y-scroll">
+            <div className="relative bg-white w-full h-full rounded-lg shadow-md p-10 overflow-y-auto">
                 <div className="flex justify-between">
                     <h1 className="font-bold text-2xl">NEW BILL</h1>
                     <div className="flex items-center">

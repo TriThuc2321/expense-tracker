@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useStore } from '~/store/hooks';
+import { useState } from 'react';
 import { CodeBracketIcon, BellIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 import clsx from 'clsx';
 import styles from './Menu.module.scss';
 import { Link, useLocation } from 'react-router-dom';
+import Workspace from '../workspace';
 
 export default function Menu() {
     const listMenu = [
@@ -33,7 +33,7 @@ export default function Menu() {
 
     return (
         <div className="mt-8">
-            <p className="my-2 px-3 py-1 cursor-pointer">Workspace</p>
+            <Workspace />
             {listMenu.map((menu) => (
                 <Link key={menu.id} to={menu.path} onClick={() => setActiveMenu(menu.path)}>
                     <div

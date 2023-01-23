@@ -10,6 +10,10 @@ module.exports = {
             unselected: '#6F767E',
             slate: colors.slate,
             gray: colors.gray,
+            error: 'rgb(211, 47, 47)',
+            warning: 'rgb(245, 124, 0)',
+            success: 'rgb(56, 142, 60)',
+            info: 'rgb(2, 136, 209)',
         },
         extend: {
             height: {
