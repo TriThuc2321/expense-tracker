@@ -1,13 +1,27 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/20/solid';
+
+import { getWorkspaceByUserId } from '~/services/apis/workspace';
 import { NewWorkSpaceForm } from './components';
+import { useStore } from '~/store/hooks';
+import { IWorkspace } from '~/interfaces';
 
 function Workspace() {
-    const [workspaces, setWorkspaces] = useState([{ workspaceName: 'Daily' }, { workspaceName: 'Tro ne' }]);
-    const [selected, setSelected] = useState(workspaces[0]);
+    const { getUser } = useStore();
+    const [workspaces, setWorkspaces] = useState<Array<IWorkspace>>([]);
+    const [selected, setSelected] = useState<IWorkspace>({ workspaceId: '1', workspaceName: '' });
     const [showNewWorkspace, setShowNewWorkspace] = useState(false);
 
+    useEffect(() => {
+        const getWorkspaces = async () => {
+            const { userId } = getUser();
+            const workspaces = await getWorkspaceByUserId(userId);
+            setWorkspaces(workspaces);
+            setSelected(workspaces[0]);
+        };
+        getWorkspaces();
+    }, []);
     const showNewWorkspaceForm = () => {
         setShowNewWorkspace(!showNewWorkspace);
     };
@@ -18,7 +32,7 @@ function Workspace() {
             <Listbox value={selected} onChange={setSelected}>
                 <div className="relative mt-1">
                     <Listbox.Button className="relative flex w-full cursor-pointer rounded-lg bg-primary py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                        <span className="block truncate font-bold">{selected.workspaceName}</span>
+                        <span className="block truncate font-bold">{selected?.workspaceName}</span>
                     </Listbox.Button>
                     <span className="absolute inset-y-0 right-0 flex items-center pr-2">
                         <PlusIcon
@@ -34,22 +48,22 @@ function Workspace() {
                         leaveTo="opacity-0"
                     >
                         <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-unselected py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {workspaces.map((person, personIdx) => (
+                            {workspaces.map((workspace, workspaceIdx) => (
                                 <Listbox.Option
-                                    key={personIdx}
+                                    key={workspaceIdx}
                                     className={({ active }) =>
                                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
                                             active ? 'bg-amber-100 text-amber-900 font-bold' : 'text-gray-900'
                                         }`
                                     }
-                                    value={person}
+                                    value={workspace}
                                 >
                                     {({ selected }) => (
                                         <>
                                             <span
                                                 className={`block truncate ${selected ? 'font-bold' : 'font-normal'}`}
                                             >
-                                                {person.workspaceName}
+                                                {workspace?.workspaceName}
                                             </span>
                                             {selected ? (
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">

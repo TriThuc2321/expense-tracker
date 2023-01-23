@@ -6,9 +6,8 @@ interface IUser {
 }
 
 interface IWorkspace {
-    id: string;
-    title: string;
-    users: Array<IUser>;
+    workspaceId: string;
+    workspaceName: string;
 }
 
 interface IProduct {
