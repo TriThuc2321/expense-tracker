@@ -2,12 +2,13 @@ interface IUser {
     userId: string;
     fullName: string | null;
     picture: string | null;
-    email: string | null;
+    email: string;
 }
 
 interface IWorkspace {
     workspaceId: string;
     workspaceName: string;
+    emails: Array<string>;
 }
 
 interface IProduct {

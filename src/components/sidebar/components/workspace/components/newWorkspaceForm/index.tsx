@@ -2,7 +2,9 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { useState, useEffect } from 'react';
 
 import { Button, Alert } from '~/components';
-import { validateEmail } from '~/utils';
+import { validateEmail, getUId } from '~/utils';
+import { useStore } from '~/store/hooks';
+import { addWorkspace } from '~/services/apis/workspace';
 
 type IErrorMessage = {
     title: string;
@@ -10,8 +12,10 @@ type IErrorMessage = {
 };
 
 export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWorkspaceForm: () => void }) {
+    const { getUser } = useStore();
     const [emails, setEmails] = useState<Array<string>>([]);
     const [email, setEmail] = useState<string>('');
+    const [workspaceName, setWorkspaceName] = useState<string>('Untitled');
 
     const [errorMgs, setErrorMgs] = useState<IErrorMessage>({
         title: '',
@@ -59,7 +63,14 @@ export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWork
     };
 
     const saveHandle = () => {
-        console.log('aaa');
+        const { email } = getUser();
+
+        const newWorkSpace = {
+            emails: [email, ...emails],
+            workspaceName,
+            workspaceId: getUId(),
+        };
+        addWorkspace(newWorkSpace);
     };
 
     return (
@@ -70,6 +81,8 @@ export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWork
                         type="text"
                         placeholder="Workspace name..."
                         className="mt-1 mr-1 px-4 py-2 block w-full font-bold rounded-md text-lg border-b-2"
+                        onChange={(e) => setWorkspaceName(e.target.value)}
+                        value={workspaceName}
                     />
                     <div className="flex items-center">
                         <Button text="Cancel" outline className="mx-2" onClick={showNewWorkspaceForm} />

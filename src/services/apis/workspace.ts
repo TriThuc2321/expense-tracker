@@ -1,7 +1,7 @@
 import { request, METHODS } from '~/services/request';
 import { IWorkspace } from '~/interfaces';
 
-const getWorkspaceByUserId = async (userId: string) => await request(`workspace/userId/${userId}`, METHODS.GET);
+const getWorkspaceByEmail = async (email: string) => await request(`workspace/email/${email}`, METHODS.GET);
 const addWorkspace = async (workspace: IWorkspace) => await request('workspace', METHODS.POST, workspace);
 
-export { getWorkspaceByUserId, addWorkspace };
+export { getWorkspaceByEmail, addWorkspace };
