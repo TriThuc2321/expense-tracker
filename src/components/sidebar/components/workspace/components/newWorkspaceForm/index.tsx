@@ -1,62 +1,36 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { useState, useEffect } from 'react';
 
-import { Button, Alert } from '~/components';
+import { Button, useAlert } from '~/components';
 import { validateEmail, getUId } from '~/utils';
 import { useStore } from '~/store/hooks';
 import { addWorkspace } from '~/services/apis/workspace';
 
-type IErrorMessage = {
-    title: string;
-    visible: boolean;
-};
-
 export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWorkspaceForm: () => void }) {
     const { getUser } = useStore();
+    const { showAlert, Alert } = useAlert();
     const [emails, setEmails] = useState<Array<string>>([]);
     const [email, setEmail] = useState<string>('');
     const [workspaceName, setWorkspaceName] = useState<string>('Untitled');
 
-    const [errorMgs, setErrorMgs] = useState<IErrorMessage>({
-        title: '',
-        visible: false,
-    });
-
     const inviteHandle = () => {
         if (validateEmail(email)) {
             if (emails.includes(email)) {
-                setErrorMgs({
-                    title: 'Email has already existed',
-                    visible: true,
+                showAlert({
+                    message: 'Email has already existed',
+                    alertType: 'ERROR',
                 });
             } else {
                 setEmails([email, ...emails]);
                 setEmail('');
             }
         } else {
-            setErrorMgs({
-                title: 'Email invalided',
-                visible: true,
+            showAlert({
+                message: 'Email invalided',
+                alertType: 'ERROR',
             });
         }
     };
-
-    useEffect(() => {
-        if (errorMgs.visible) {
-            const timer = setTimeout(
-                () =>
-                    setErrorMgs({
-                        title: '',
-                        visible: false,
-                    }),
-                3000,
-            );
-
-            return () => {
-                clearTimeout(timer);
-            };
-        }
-    }, [errorMgs]);
 
     const deleteHandle = (email: string) => {
         setEmails(emails.filter((e) => e != email));
@@ -71,10 +45,12 @@ export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWork
             workspaceId: getUId(),
         };
         addWorkspace(newWorkSpace);
+        showNewWorkspaceForm();
     };
 
     return (
         <div className="flex justify-center absolute top-0 bottom-0 left-0 right-0 py-20 px-96 text-primary">
+            <Alert />
             <div className="relative z-10 bg-white w-2/3 h-full rounded-md shadow-md p-10 overflow-y-auto overflow-x-hidden">
                 <div className="flex items-center">
                     <input
@@ -89,8 +65,6 @@ export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWork
                         <Button text="Save" outline={false} className="" onClick={saveHandle} />
                     </div>
                 </div>
-
-                {errorMgs.visible && <Alert message={errorMgs.title} alertType="ERROR" />}
 
                 <div className="flex items-center mt-4 mb-4">
                     <input

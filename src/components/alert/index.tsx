@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import clsx from 'clsx';
 import {
     CheckCircleIcon,
@@ -12,7 +12,13 @@ type IAlertProps = {
     alertType: 'SUCCESS' | 'ERROR' | 'WARNING' | 'INFO';
 };
 
-export default function Alert({ message, alertType }: IAlertProps) {
+type IAlert = {
+    message: string;
+    alertType: 'SUCCESS' | 'ERROR' | 'WARNING' | 'INFO';
+    visible: boolean;
+};
+
+function Alert({ message, alertType }: IAlertProps) {
     return (
         <div
             className={clsx(
@@ -37,3 +43,39 @@ export default function Alert({ message, alertType }: IAlertProps) {
         </div>
     );
 }
+
+const useAlert = () => {
+    const [alert, setAlert] = useState<IAlert>({
+        message: '',
+        alertType: 'SUCCESS',
+        visible: false,
+    });
+
+    const showAlert = (alertProps: IAlertProps) => {
+        setAlert({ ...alertProps, visible: true });
+    };
+
+    useEffect(() => {
+        if (alert.visible) {
+            const timer = setTimeout(
+                () =>
+                    setAlert({
+                        ...alert,
+                        visible: false,
+                    }),
+                3000,
+            );
+
+            return () => {
+                clearTimeout(timer);
+            };
+        }
+    }, [alert]);
+
+    return {
+        showAlert,
+        Alert: () => (alert.visible ? <Alert message={alert.message} alertType={alert.alertType} /> : <Fragment />),
+    };
+};
+
+export default useAlert;

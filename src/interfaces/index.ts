@@ -3,6 +3,7 @@ interface IUser {
     fullName: string | null;
     picture: string | null;
     email: string;
+    workspaces: Array<IWorkspace>;
 }
 
 interface IWorkspace {

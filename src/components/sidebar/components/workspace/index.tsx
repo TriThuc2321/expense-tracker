@@ -9,19 +9,10 @@ import { IWorkspace } from '~/interfaces';
 
 function Workspace() {
     const { getUser } = useStore();
-    const [workspaces, setWorkspaces] = useState<Array<IWorkspace>>([]);
-    const [selected, setSelected] = useState<IWorkspace>({ workspaceId: '1', workspaceName: '' });
+    const { workspaces } = getUser();
+    const [selected, setSelected] = useState(workspaces[0]);
     const [showNewWorkspace, setShowNewWorkspace] = useState(false);
 
-    useEffect(() => {
-        const getWorkspaces = async () => {
-            const { email } = getUser();
-            const workspaces = await getWorkspaceByEmail(email);
-            setWorkspaces(workspaces);
-            setSelected(workspaces[0]);
-        };
-        getWorkspaces();
-    }, []);
     const showNewWorkspaceForm = () => {
         setShowNewWorkspace(!showNewWorkspace);
     };
