@@ -1,8 +1,10 @@
 import { createContext } from 'react';
-import { IStore, IUser } from '~/interfaces';
+import { IStore, IUser, IWorkspace } from '~/interfaces';
 
 export type StoreContextPros = {
     store: IStore;
     setUser: (user: IUser) => void;
+    setSelectWorkspace: (workspace: IWorkspace) => void;
+    setWorkspaces: (workspaces: Array<IWorkspace>) => void;
 };
 export const StoreContext = createContext<StoreContextPros>({} as StoreContextPros);

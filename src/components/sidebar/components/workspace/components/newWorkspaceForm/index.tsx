@@ -1,19 +1,24 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { Button, useAlert } from '~/components';
 import { validateEmail, getUId } from '~/utils';
 import { useStore } from '~/store/hooks';
 import { addWorkspace } from '~/services/apis/workspace';
+import { checkEmailExisted } from '~/services/apis/user';
 
-export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWorkspaceForm: () => void }) {
+interface INewWorkSpaceFormProps {
+    toggleNewWorkspaceForm: (success: boolean) => void;
+}
+
+export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpaceFormProps) {
     const { getUser } = useStore();
     const { showAlert, Alert } = useAlert();
     const [emails, setEmails] = useState<Array<string>>([]);
     const [email, setEmail] = useState<string>('');
     const [workspaceName, setWorkspaceName] = useState<string>('Untitled');
 
-    const inviteHandle = () => {
+    const inviteHandle = async () => {
         if (validateEmail(email)) {
             if (emails.includes(email)) {
                 showAlert({
@@ -21,8 +26,17 @@ export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWork
                     alertType: 'ERROR',
                 });
             } else {
-                setEmails([email, ...emails]);
-                setEmail('');
+                const { status, message } = await checkEmailExisted(email);
+
+                if (status == 'SUCCESS' && message) {
+                    setEmails([email, ...emails]);
+                    setEmail('');
+                } else {
+                    showAlert({
+                        message: 'Email was not registered',
+                        alertType: 'ERROR',
+                    });
+                }
             }
         } else {
             showAlert({
@@ -36,7 +50,14 @@ export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWork
         setEmails(emails.filter((e) => e != email));
     };
 
-    const saveHandle = () => {
+    const saveHandle = async () => {
+        if (!workspaceName) {
+            showAlert({
+                message: 'Please enter workspace name',
+                alertType: 'ERROR',
+            });
+            return;
+        }
         const { email } = getUser();
 
         const newWorkSpace = {
@@ -44,8 +65,13 @@ export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWork
             workspaceName,
             workspaceId: getUId(),
         };
-        addWorkspace(newWorkSpace);
-        showNewWorkspaceForm();
+        const { status } = await addWorkspace(newWorkSpace);
+
+        if (status == 'SUCCESS') {
+            toggleNewWorkspaceForm(true);
+        } else {
+            toggleNewWorkspaceForm(false);
+        }
     };
 
     return (
@@ -61,7 +87,7 @@ export default function NewWorkSpaceForm({ showNewWorkspaceForm }: { showNewWork
                         value={workspaceName}
                     />
                     <div className="flex items-center">
-                        <Button text="Cancel" outline className="mx-2" onClick={showNewWorkspaceForm} />
+                        <Button text="Cancel" outline className="mx-2" onClick={() => toggleNewWorkspaceForm(false)} />
                         <Button text="Save" outline={false} className="" onClick={saveHandle} />
                     </div>
                 </div>

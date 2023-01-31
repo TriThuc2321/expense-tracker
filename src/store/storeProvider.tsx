@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
 import { StoreContext } from './storeContext';
-import { IStore, IUser } from '~/interfaces';
+import { IStore, IUser, IWorkspace } from '~/interfaces';
 import { Loader } from '~/pages';
 import { storeReducer, EStoreAction } from './storeReducer';
 import { getWorkspaceByEmail } from '~/services/apis/workspace';
@@ -20,8 +20,14 @@ const INIT_USER: IUser = {
     workspaces: [],
 };
 
+const INIT_WORKSPACE: IWorkspace = {
+    workspaceId: '',
+    workspaceName: '',
+};
+
 const INIT_STATE: IStore = {
     user: INIT_USER,
+    workspace: INIT_WORKSPACE,
 };
 
 export const StoreProvider = ({ children }: ProviderProps) => {
@@ -35,18 +41,26 @@ export const StoreProvider = ({ children }: ProviderProps) => {
         dispatch({ type: EStoreAction.SET_USER, payload: user });
     };
 
+    const setSelectWorkspace = (workspace: IWorkspace) => {
+        dispatch({ type: EStoreAction.SET_SELECTED_WORKSPACE, payload: workspace });
+    };
+
+    const setWorkspaces = (workspaces: Array<IWorkspace>) => {
+        dispatch({ type: EStoreAction.SET_WORKSPACES, payload: workspaces });
+    };
+
     useEffect(() => {
-        //  auth.signOut();
+        // auth.signOut();
         const authHandle = auth.onIdTokenChanged(async (user: any) => {
             if (user?.uid) {
                 const { uid, displayName, email, photoURL } = user;
-                const workspaces = await getWorkspaceByEmail(email);
+                const res = await getWorkspaceByEmail(email);
                 setUser({
                     fullName: displayName,
                     userId: uid,
                     email,
                     picture: photoURL,
-                    workspaces,
+                    workspaces: res?.data,
                 });
 
                 if (user.accessToken !== localStorage.getItem('accessToken')) {
@@ -64,5 +78,9 @@ export const StoreProvider = ({ children }: ProviderProps) => {
         return () => authHandle();
     }, [auth]);
 
-    return <StoreContext.Provider value={{ store, setUser }}>{loading ? <Loader /> : children}</StoreContext.Provider>;
+    return (
+        <StoreContext.Provider value={{ store, setUser, setSelectWorkspace, setWorkspaces }}>
+            {loading ? <Loader /> : children}
+        </StoreContext.Provider>
+    );
 };

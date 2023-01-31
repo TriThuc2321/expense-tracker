@@ -1,27 +1,44 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/20/solid';
 
 import { getWorkspaceByEmail } from '~/services/apis/workspace';
 import { NewWorkSpaceForm } from './components';
 import { useStore } from '~/store/hooks';
+import { useAlert } from '~/components';
 import { IWorkspace } from '~/interfaces';
 
 function Workspace() {
-    const { getUser } = useStore();
-    const { workspaces } = getUser();
+    const { getUser, setWorkspaces } = useStore();
+    const { workspaces, email } = getUser();
+
+    const { showAlert, Alert } = useAlert();
     const [selected, setSelected] = useState(workspaces[0]);
     const [showNewWorkspace, setShowNewWorkspace] = useState(false);
 
-    const showNewWorkspaceForm = () => {
+    const toggleNewWorkspaceForm = async (success: boolean) => {
+        if (success) {
+            showAlert({
+                message: 'Create workspace successfully',
+                alertType: 'SUCCESS',
+            });
+
+            const { data } = await getWorkspaceByEmail(email);
+
+            setWorkspaces(data);
+            if (data.length == 1) {
+                setSelected(data[0]);
+            }
+        }
         setShowNewWorkspace(!showNewWorkspace);
     };
 
     return (
         <div>
-            {showNewWorkspace && <NewWorkSpaceForm showNewWorkspaceForm={showNewWorkspaceForm} />}
+            <Alert />
+            {showNewWorkspace && <NewWorkSpaceForm toggleNewWorkspaceForm={toggleNewWorkspaceForm} />}
             {workspaces.length == 0 ? (
-                <p className="cursor-pointer" onClick={showNewWorkspaceForm}>
+                <p className="cursor-pointer" onClick={() => toggleNewWorkspaceForm(false)}>
                     Create new workspace
                 </p>
             ) : (
@@ -34,7 +51,7 @@ function Workspace() {
                             <PlusIcon
                                 className="h-5 w-5 text-white cursor-pointer"
                                 aria-hidden="true"
-                                onClick={showNewWorkspaceForm}
+                                onClick={() => toggleNewWorkspaceForm(false)}
                             />
                         </span>
                         <Transition

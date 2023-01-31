@@ -9,7 +9,6 @@ interface IUser {
 interface IWorkspace {
     workspaceId: string;
     workspaceName: string;
-    emails: Array<string>;
 }
 
 interface IProduct {
@@ -31,6 +30,7 @@ interface IBill {
 
 interface IStore {
     user: IUser;
+    workspace: IWorkspace;
 }
 
 export type { IWorkspace, IProduct, IBill, IUser, IStore };
