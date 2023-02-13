@@ -33,8 +33,8 @@ export default function NewBillForm({ showBillHandle }: NewBillFormProps) {
                 <div className="flex justify-between">
                     <h1 className="font-bold text-2xl">NEW BILL</h1>
                     <div className="flex items-center">
-                        <Button text="Cancel" outline className="mr-4" onClick={showBillHandle} />
-                        <Button text="Save" outline={false} className="" onClick={saveHandle} />
+                        <Button text="Cancel" outline status="LOADING" className="mr-4" onClick={showBillHandle} />
+                        <Button text="Save" outline={false} status="DISABLE" className="" onClick={saveHandle} />
                     </div>
                 </div>
 

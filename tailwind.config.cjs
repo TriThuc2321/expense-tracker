@@ -14,6 +14,7 @@ module.exports = {
             warning: 'rgb(245, 124, 0)',
             success: 'rgb(56, 142, 60)',
             info: 'rgb(2, 136, 209)',
+            primary03: '#1b1c317d',
         },
         extend: {
             height: {

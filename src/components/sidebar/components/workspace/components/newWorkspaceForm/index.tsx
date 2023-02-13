@@ -1,11 +1,11 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-
 import { Button, useAlert } from '~/components';
 import { validateEmail, getUId } from '~/utils';
 import { useStore } from '~/store/hooks';
 import { addWorkspace } from '~/services/apis/workspace';
-import { checkEmailExisted } from '~/services/apis/user';
+import { getUserById } from '~/services/apis/user';
+import { IUser } from '~/interfaces';
 
 interface INewWorkSpaceFormProps {
     toggleNewWorkspaceForm: (success: boolean) => void;
@@ -14,22 +14,28 @@ interface INewWorkSpaceFormProps {
 export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpaceFormProps) {
     const { getUser } = useStore();
     const { showAlert, Alert } = useAlert();
-    const [emails, setEmails] = useState<Array<string>>([]);
+    const [users, setUsers] = useState<Array<IUser>>([]);
     const [email, setEmail] = useState<string>('');
     const [workspaceName, setWorkspaceName] = useState<string>('Untitled');
 
+    const [inviteLoading, setInviteLoading] = useState(false);
+    const [saveLoading, setSaveLoading] = useState(false);
+
     const inviteHandle = async () => {
+        setInviteLoading(true);
         if (validateEmail(email)) {
-            if (emails.includes(email)) {
+            const userEmail = getUser().email;
+
+            if (users.find((e) => e.email == email) || email === userEmail) {
                 showAlert({
                     message: 'Email has already existed',
                     alertType: 'ERROR',
                 });
             } else {
-                const { status, message } = await checkEmailExisted(email);
+                const { status, data } = await getUserById(email);
 
-                if (status == 'SUCCESS' && message) {
-                    setEmails([email, ...emails]);
+                if (status == 'SUCCESS' && data) {
+                    setUsers([data, ...users]);
                     setEmail('');
                 } else {
                     showAlert({
@@ -44,13 +50,15 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
                 alertType: 'ERROR',
             });
         }
+        setInviteLoading(false);
     };
 
     const deleteHandle = (email: string) => {
-        setEmails(emails.filter((e) => e != email));
+        setUsers(users.filter((e) => e.email != email));
     };
 
     const saveHandle = async () => {
+        setSaveLoading(true);
         if (!workspaceName) {
             showAlert({
                 message: 'Please enter workspace name',
@@ -61,9 +69,10 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
         const { email } = getUser();
 
         const newWorkSpace = {
-            emails: [email, ...emails],
+            emails: [email, ...users.map((e) => e.email)],
             workspaceName,
             workspaceId: getUId(),
+            email,
         };
         const { status } = await addWorkspace(newWorkSpace);
 
@@ -72,10 +81,11 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
         } else {
             toggleNewWorkspaceForm(false);
         }
+        setSaveLoading(false);
     };
 
     return (
-        <div className="flex justify-center absolute top-0 bottom-0 left-0 right-0 py-20 px-96 text-primary">
+        <div className="flex justify-center absolute top-0 bottom-0 left-0 right-0 py-20 px-96 text-primary z-10 bg-primary03">
             <Alert />
             <div className="relative z-10 bg-white w-2/3 h-full rounded-md shadow-md p-10 overflow-y-auto overflow-x-hidden">
                 <div className="flex items-center">
@@ -87,8 +97,20 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
                         value={workspaceName}
                     />
                     <div className="flex items-center">
-                        <Button text="Cancel" outline className="mx-2" onClick={() => toggleNewWorkspaceForm(false)} />
-                        <Button text="Save" outline={false} className="" onClick={saveHandle} />
+                        <Button
+                            text="Cancel"
+                            outline
+                            status="ACTIVE"
+                            className="mx-2"
+                            onClick={() => toggleNewWorkspaceForm(false)}
+                        />
+                        <Button
+                            text="Save"
+                            outline={false}
+                            status={saveLoading ? 'LOADING' : 'ACTIVE'}
+                            className=""
+                            onClick={saveHandle}
+                        />
                     </div>
                 </div>
 
@@ -105,27 +127,36 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
                             }
                         }}
                     />
-                    <Button text="Invite" onClick={inviteHandle} className="ml-1" outline={false} />
+                    <Button
+                        text="Invite"
+                        status={inviteLoading ? 'LOADING' : 'ACTIVE'}
+                        onClick={inviteHandle}
+                        className="ml-1"
+                        outline={false}
+                    />
                 </div>
 
-                {emails.map((email) => (
-                    <EmailItem email={email} key={email} deleteHandle={deleteHandle} />
+                {users.map((user) => (
+                    <UserItem user={user} key={user.email} deleteHandle={deleteHandle} />
                 ))}
             </div>
         </div>
     );
 }
 
-type EmailItemProps = {
-    email: string;
+type UserItemProps = {
+    user: IUser;
     deleteHandle: (e: string) => void;
 };
 
-function EmailItem({ email, deleteHandle }: EmailItemProps) {
+function UserItem({ user, deleteHandle }: UserItemProps) {
     return (
         <div className="flex w-full px-4 py-0.5 my-1 rounded-md shadow-md justify-between">
-            <p>{email}</p>
-            <TrashIcon className="h-5 w-5 m-1 cursor-pointer" onClick={() => deleteHandle(email)} />
+            <div className="flex">
+                <img src={user?.picture} className="h-6 w-6 rounded-full mr-2" />
+                <p>{user.email}</p>
+            </div>
+            <TrashIcon className="h-5 w-5 m-1 cursor-pointer" onClick={() => deleteHandle(user.email)} />
         </div>
     );
 }

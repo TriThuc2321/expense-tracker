@@ -1,10 +1,11 @@
 import { IBill } from '~/interfaces';
 
 const user = {
-    name: 'Thức Trần Trí',
-    id: 'smGBBdHl7sQNbKFVccwi3xEeui03',
+    fullName: 'Thức Trần Trí',
+    userId: 'smGBBdHl7sQNbKFVccwi3xEeui03',
     email: '19522321@gm.uit.edu.vn',
     picture: 'https://lh3.googleusercontent.com/a/AEdFTp5VJofewLLf8aa0bWlXpf3YxFmSuaj5t2IPOun3=s96-c',
+    workspaces: null,
 };
 
 const bills: Array<IBill> = [

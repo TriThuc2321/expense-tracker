@@ -6,7 +6,7 @@ import { StoreContext } from './storeContext';
 import { IStore, IUser, IWorkspace } from '~/interfaces';
 import { Loader } from '~/pages';
 import { storeReducer, EStoreAction } from './storeReducer';
-import { getWorkspaceByEmail } from '~/services/apis/workspace';
+import { getWorkspacesByEmail } from '~/services/apis/workspace';
 
 interface ProviderProps {
     children: ReactNode;
@@ -54,7 +54,7 @@ export const StoreProvider = ({ children }: ProviderProps) => {
         const authHandle = auth.onIdTokenChanged(async (user: any) => {
             if (user?.uid) {
                 const { uid, displayName, email, photoURL } = user;
-                const res = await getWorkspaceByEmail(email);
+                const res = await getWorkspacesByEmail(email);
                 setUser({
                     fullName: displayName,
                     userId: uid,

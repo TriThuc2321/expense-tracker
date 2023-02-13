@@ -1,14 +1,15 @@
 interface IUser {
     userId: string;
-    fullName: string | null;
-    picture: string | null;
+    fullName: string | undefined;
+    picture: string | undefined;
     email: string;
-    workspaces: Array<IWorkspace>;
+    workspaces: Array<IWorkspace> | undefined;
 }
 
 interface IWorkspace {
     workspaceId: string;
     workspaceName: string;
+    email: string;
 }
 
 interface IProduct {

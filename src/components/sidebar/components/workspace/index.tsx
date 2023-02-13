@@ -1,20 +1,21 @@
 import { Fragment, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
-import { CheckIcon, PlusIcon } from '@heroicons/react/20/solid';
+import { CheckIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
-import { getWorkspaceByEmail } from '~/services/apis/workspace';
-import { NewWorkSpaceForm } from './components';
+import { getWorkspacesByEmail } from '~/services/apis/workspace';
+import { NewWorkSpaceForm, EditWorkspaceForm } from './components';
 import { useStore } from '~/store/hooks';
 import { useAlert } from '~/components';
-import { IWorkspace } from '~/interfaces';
 
 function Workspace() {
     const { getUser, setWorkspaces } = useStore();
     const { workspaces, email } = getUser();
 
     const { showAlert, Alert } = useAlert();
-    const [selected, setSelected] = useState(workspaces[0]);
+    const [selected, setSelected] = useState(workspaces ? workspaces[0] : null);
     const [showNewWorkspace, setShowNewWorkspace] = useState(false);
+    const [showEditWorkspace, setShowEditWorkspace] = useState(false);
 
     const toggleNewWorkspaceForm = async (success: boolean) => {
         if (success) {
@@ -23,7 +24,7 @@ function Workspace() {
                 alertType: 'SUCCESS',
             });
 
-            const { data } = await getWorkspaceByEmail(email);
+            const { data } = await getWorkspacesByEmail(email);
 
             setWorkspaces(data);
             if (data.length == 1) {
@@ -33,11 +34,32 @@ function Workspace() {
         setShowNewWorkspace(!showNewWorkspace);
     };
 
+    const toggleEditWorkspaceForm = async (success: boolean) => {
+        if (success) {
+            showAlert({
+                message: 'Update workspace successfully',
+                alertType: 'SUCCESS',
+            });
+
+            const { data } = await getWorkspacesByEmail(email);
+
+            setWorkspaces(data);
+            if (data.length == 1) {
+                setSelected(data[0]);
+            }
+        }
+        setShowEditWorkspace(!showEditWorkspace);
+    };
+
     return (
         <div>
             <Alert />
             {showNewWorkspace && <NewWorkSpaceForm toggleNewWorkspaceForm={toggleNewWorkspaceForm} />}
-            {workspaces.length == 0 ? (
+            {showEditWorkspace && (
+                <EditWorkspaceForm toggleEditWorkspaceForm={toggleEditWorkspaceForm} workspace={selected} />
+            )}
+
+            {workspaces?.length == 0 ? (
                 <p className="cursor-pointer" onClick={() => toggleNewWorkspaceForm(false)}>
                     Create new workspace
                 </p>
@@ -48,6 +70,11 @@ function Workspace() {
                             <span className="block truncate font-bold">{selected?.workspaceName}</span>
                         </Listbox.Button>
                         <span className="absolute inset-y-0 right-0 flex items-center pr-2">
+                            <PencilSquareIcon
+                                className="h-5 w-5 text-white cursor-pointer mr-1"
+                                aria-hidden="true"
+                                onClick={() => toggleEditWorkspaceForm(false)}
+                            />
                             <PlusIcon
                                 className="h-5 w-5 text-white cursor-pointer"
                                 aria-hidden="true"
@@ -61,7 +88,7 @@ function Workspace() {
                             leaveTo="opacity-0"
                         >
                             <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-unselected py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                {workspaces.map((workspace, workspaceIdx) => (
+                                {workspaces?.map((workspace, workspaceIdx) => (
                                     <Listbox.Option
                                         key={workspaceIdx}
                                         className={({ active }) =>
