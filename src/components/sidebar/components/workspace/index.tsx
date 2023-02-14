@@ -1,14 +1,18 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/solid';
-import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, EllipsisHorizontalIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 import { getWorkspacesByEmail } from '~/services/apis/workspace';
 import { NewWorkSpaceForm, EditWorkspaceForm } from './components';
 import { useStore } from '~/store/hooks';
 import { useAlert } from '~/components';
+import { useOutsideHandle } from '~/hooks';
 
 function Workspace() {
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    useOutsideHandle(wrapperRef, () => setShowMenu(false));
+
     const { getUser, setWorkspaces } = useStore();
     const { workspaces, email } = getUser();
 
@@ -16,6 +20,7 @@ function Workspace() {
     const [selected, setSelected] = useState(workspaces ? workspaces[0] : null);
     const [showNewWorkspace, setShowNewWorkspace] = useState(false);
     const [showEditWorkspace, setShowEditWorkspace] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
 
     const toggleNewWorkspaceForm = async (success: boolean) => {
         if (success) {
@@ -32,6 +37,7 @@ function Workspace() {
             }
         }
         setShowNewWorkspace(!showNewWorkspace);
+        setShowMenu(false);
     };
 
     const toggleEditWorkspaceForm = async (success: boolean) => {
@@ -49,13 +55,14 @@ function Workspace() {
             }
         }
         setShowEditWorkspace(!showEditWorkspace);
+        setShowMenu(false);
     };
 
     return (
-        <div>
+        <div className="relative">
             <Alert />
             {showNewWorkspace && <NewWorkSpaceForm toggleNewWorkspaceForm={toggleNewWorkspaceForm} />}
-            {showEditWorkspace && (
+            {selected && showEditWorkspace && (
                 <EditWorkspaceForm toggleEditWorkspaceForm={toggleEditWorkspaceForm} workspace={selected} />
             )}
 
@@ -70,15 +77,10 @@ function Workspace() {
                             <span className="block truncate font-bold">{selected?.workspaceName}</span>
                         </Listbox.Button>
                         <span className="absolute inset-y-0 right-0 flex items-center pr-2">
-                            <PencilSquareIcon
-                                className="h-5 w-5 text-white cursor-pointer mr-1"
-                                aria-hidden="true"
-                                onClick={() => toggleEditWorkspaceForm(false)}
-                            />
-                            <PlusIcon
+                            <EllipsisHorizontalIcon
                                 className="h-5 w-5 text-white cursor-pointer"
                                 aria-hidden="true"
-                                onClick={() => toggleNewWorkspaceForm(false)}
+                                onClick={() => setShowMenu(!showMenu)}
                             />
                         </span>
                         <Transition
@@ -120,6 +122,37 @@ function Workspace() {
                         </Transition>
                     </div>
                 </Listbox>
+            )}
+
+            {showMenu && (
+                <div
+                    className="flex flex-col absolute top-10 left-0 right-0 rounded-md bg-gray-600 px-4 py-2"
+                    ref={wrapperRef}
+                >
+                    <div
+                        className="my-2 flex items-center justify-end cursor-pointer"
+                        onClick={() => toggleNewWorkspaceForm(false)}
+                    >
+                        <p>New workspace</p>
+                        <PlusIcon className="h-5 w-5 text-white ml-2" aria-hidden="true" />
+                    </div>
+
+                    <div
+                        className="my-2 flex items-center justify-end cursor-pointer"
+                        onClick={() => toggleEditWorkspaceForm(false)}
+                    >
+                        <p>Edit workspace</p>
+                        <PencilSquareIcon className="h-5 w-5 text-white ml-2" aria-hidden="true" />
+                    </div>
+
+                    <div
+                        className="my-2 flex items-center justify-end cursor-pointer"
+                        onClick={() => toggleEditWorkspaceForm(false)}
+                    >
+                        <p>Delete workspace</p>
+                        <TrashIcon className="h-5 w-5 text-white ml-2" aria-hidden="true" />
+                    </div>
+                </div>
             )}
         </div>
     );

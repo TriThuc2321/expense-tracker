@@ -1,17 +1,21 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, useAlert } from '~/components';
 import { validateEmail, getUId } from '~/utils';
 import { useStore } from '~/store/hooks';
 import { addWorkspace } from '~/services/apis/workspace';
 import { getUserById } from '~/services/apis/user';
 import { IUser } from '~/interfaces';
+import { useOutsideHandle } from '~/hooks';
 
 interface INewWorkSpaceFormProps {
     toggleNewWorkspaceForm: (success: boolean) => void;
 }
 
 export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpaceFormProps) {
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    useOutsideHandle(wrapperRef, () => toggleNewWorkspaceForm(false));
+
     const { getUser } = useStore();
     const { showAlert, Alert } = useAlert();
     const [users, setUsers] = useState<Array<IUser>>([]);
@@ -85,9 +89,12 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
     };
 
     return (
-        <div className="flex justify-center absolute top-0 bottom-0 left-0 right-0 py-20 px-96 text-primary z-10 bg-primary03">
+        <div className="flex justify-center fixed top-0 bottom-0 left-0 right-0 py-20 px-96 text-primary z-10 bg-primary03">
             <Alert />
-            <div className="relative z-10 bg-white w-2/3 h-full rounded-md shadow-md p-10 overflow-y-auto overflow-x-hidden">
+            <div
+                className="relative z-10 bg-white w-2/3 h-full rounded-md shadow-md p-10 overflow-y-auto overflow-x-hidden"
+                ref={wrapperRef}
+            >
                 <div className="flex items-center">
                     <input
                         type="text"

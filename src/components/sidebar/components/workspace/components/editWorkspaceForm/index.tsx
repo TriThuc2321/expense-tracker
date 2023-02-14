@@ -1,12 +1,13 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import { Button, useAlert } from '~/components';
-import { validateEmail, getUId } from '~/utils';
+import { validateEmail } from '~/utils';
 import { useStore } from '~/store/hooks';
-import { addWorkspace, getUsersByWorkspaceId, updateWorkspace } from '~/services/apis/workspace';
-import { checkEmailExisted, getUserById } from '~/services/apis/user';
+import { getUsersByWorkspaceId, updateWorkspace } from '~/services/apis/workspace';
+import { getUserById } from '~/services/apis/user';
 import { IUser, IWorkspace } from '~/interfaces';
+import { useOutsideHandle } from '~/hooks';
 
 interface IEditWorkSpaceFormProps {
     toggleEditWorkspaceForm: (success: boolean) => void;
@@ -14,6 +15,9 @@ interface IEditWorkSpaceFormProps {
 }
 
 export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }: IEditWorkSpaceFormProps) {
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    useOutsideHandle(wrapperRef, () => toggleEditWorkspaceForm(false));
+
     const { getUser } = useStore();
     const { showAlert, Alert } = useAlert();
     const [users, setUsers] = useState<Array<IUser>>([]);
@@ -100,9 +104,12 @@ export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }
     };
 
     return (
-        <div className="flex justify-center absolute top-0 bottom-0 left-0 right-0 py-20 px-96 text-primary z-10 bg-primary03">
+        <div className="flex justify-center fixed top-0 bottom-0 left-0 right-0 py-20 px-96 text-primary z-10 bg-primary03">
             <Alert />
-            <div className="relative z-10 bg-white w-2/3 h-full rounded-md shadow-md p-10 overflow-y-auto overflow-x-hidden">
+            <div
+                className="relative z-10 bg-white w-2/3 h-full rounded-md shadow-md p-10 overflow-y-auto overflow-x-hidden"
+                ref={wrapperRef}
+            >
                 <div className="flex items-center">
                     <input
                         type="text"
