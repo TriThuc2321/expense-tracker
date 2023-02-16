@@ -1,13 +1,14 @@
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useRef, useState, useEffect } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, EllipsisHorizontalIcon, TrashIcon } from '@heroicons/react/24/outline';
 
-import { getWorkspacesByEmail } from '~/services/apis/workspace';
+import { deleteWorkspace, getWorkspacesByEmail } from '~/services/apis/workspace';
 import { NewWorkSpaceForm, EditWorkspaceForm } from './components';
 import { useStore } from '~/store/hooks';
-import { useAlert } from '~/components';
+import { useAlert, useConfirmAlert } from '~/components';
 import { useOutsideHandle } from '~/hooks';
+import { IWorkspace } from '~/interfaces';
 
 function Workspace() {
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -17,6 +18,7 @@ function Workspace() {
     const { workspaces, email } = getUser();
 
     const { showAlert, Alert } = useAlert();
+    const { showConfirmAlert, ConfirmAlert } = useConfirmAlert();
     const [selected, setSelected] = useState(workspaces ? workspaces[0] : null);
     const [showNewWorkspace, setShowNewWorkspace] = useState(false);
     const [showEditWorkspace, setShowEditWorkspace] = useState(false);
@@ -32,8 +34,8 @@ function Workspace() {
             const { data } = await getWorkspacesByEmail(email);
 
             setWorkspaces(data);
-            if (data.length == 1) {
-                setSelected(data[0]);
+            if (data.length >= 1) {
+                setSelected(data[length - 1]);
             }
         }
         setShowNewWorkspace(!showNewWorkspace);
@@ -50,17 +52,62 @@ function Workspace() {
             const { data } = await getWorkspacesByEmail(email);
 
             setWorkspaces(data);
-            if (data.length == 1) {
-                setSelected(data[0]);
+            if (data.length >= 1) {
+                const currentWorkspaceId = selected?.workspaceId;
+
+                const currentWorkspace = data.find((e: IWorkspace) => e.workspaceId == currentWorkspaceId);
+                setSelected(currentWorkspace);
             }
         }
         setShowEditWorkspace(!showEditWorkspace);
         setShowMenu(false);
     };
 
+    const deleteWorkspaceHandle = () => {
+        const resolve = async () => {
+            const res = await deleteWorkspace(selected?.workspaceId);
+
+            if (res.status == 'SUCCESS') {
+                const { data } = await getWorkspacesByEmail(email);
+
+                setWorkspaces(data);
+                if (data.length >= 1) {
+                    setSelected(data[0]);
+                }
+
+                showAlert({
+                    message: 'Delete workspace successfully',
+                    alertType: 'SUCCESS',
+                });
+            } else {
+                showAlert({
+                    message: res.message,
+                    alertType: 'ERROR',
+                });
+            }
+        };
+
+        const reject = () => {};
+
+        showConfirmAlert({
+            message: 'Are you sure you want to delete this workspace?',
+            reject,
+            resolve,
+        });
+    };
+
+    // useEffect(() => {
+    //     showConfirmAlert({
+    //         message: 'Are you sure you want to delete this workspace?',
+    //         reject: () => console.log('reject'),
+    //         resolve: () => console.log('resolve'),
+    //     });
+    // }, []);
+
     return (
         <div className="relative">
             <Alert />
+            <ConfirmAlert />
             {showNewWorkspace && <NewWorkSpaceForm toggleNewWorkspaceForm={toggleNewWorkspaceForm} />}
             {selected && showEditWorkspace && (
                 <EditWorkspaceForm toggleEditWorkspaceForm={toggleEditWorkspaceForm} workspace={selected} />
@@ -145,10 +192,7 @@ function Workspace() {
                         <PencilSquareIcon className="h-5 w-5 text-white ml-2" aria-hidden="true" />
                     </div>
 
-                    <div
-                        className="my-2 flex items-center justify-end cursor-pointer"
-                        onClick={() => toggleEditWorkspaceForm(false)}
-                    >
+                    <div className="my-2 flex items-center justify-end cursor-pointer" onClick={deleteWorkspaceHandle}>
                         <p>Delete workspace</p>
                         <TrashIcon className="h-5 w-5 text-white ml-2" aria-hidden="true" />
                     </div>

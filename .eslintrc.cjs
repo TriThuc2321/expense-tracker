@@ -41,5 +41,6 @@ module.exports = {
         'implicit-arrow-linebreak': 0,
         'eslint-disable-next-line': 0,
         '@typescript-eslint/no-explicit-any': 0,
+        '@typescript-eslint/no-empty-function': 0,
     },
 };

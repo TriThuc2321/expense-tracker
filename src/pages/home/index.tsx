@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 function Home() {
     return (
-        <div className="flex w-screen h-screen overflow-hidden">
+        <div className="cursor-context-menu flex w-screen h-screen overflow-hidden">
             <Sidebar />
             <Outlet />
         </div>

@@ -7,16 +7,14 @@ import {
     InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 
-type IAlertProps = {
+interface IAlertProps {
     message: string;
     alertType: 'SUCCESS' | 'ERROR' | 'WARNING' | 'INFO';
-};
+}
 
-type IAlert = {
-    message: string;
-    alertType: 'SUCCESS' | 'ERROR' | 'WARNING' | 'INFO';
+interface IAlert extends IAlertProps {
     visible: boolean;
-};
+}
 
 function Alert({ message, alertType }: IAlertProps) {
     return (

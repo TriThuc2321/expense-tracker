@@ -8,4 +8,7 @@ const addWorkspace = async (workspace: IWorkspace) => await request('workspace',
 
 const updateWorkspace = async (workspace: IWorkspace) => await request('workspace', METHODS.PUT, workspace);
 
-export { getWorkspacesByEmail, addWorkspace, getUsersByWorkspaceId, updateWorkspace };
+const deleteWorkspace = async (workspaceId: string | undefined) =>
+    await request(`workspace/${workspaceId}`, METHODS.DELETE);
+
+export { getWorkspacesByEmail, addWorkspace, getUsersByWorkspaceId, updateWorkspace, deleteWorkspace };
