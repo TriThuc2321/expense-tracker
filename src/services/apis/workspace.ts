@@ -94,7 +94,19 @@ const updateWorkspace = async ({ name, _id, collaborators }: IUpdateWorkspacePro
     return data;
 };
 
-const deleteWorkspace = async (workspaceId: string | undefined) =>
-    await request(`workspace/${workspaceId}`, METHODS.DELETE);
+const deleteWorkspace = async (_id: string) => {
+    const query = `mutation DeleteWorkspace($id: String!) {
+      deleteWorkspace(_id: $id) {
+        message
+        type
+      }
+    }`;
+
+    const data = await graphQLRequest({
+        query,
+        variables: { id: _id },
+    });
+    return data;
+};
 
 export { getMyWorkspace, addWorkspace, getUsersByWorkspaceId, updateWorkspace, deleteWorkspace };

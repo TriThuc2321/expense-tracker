@@ -19,7 +19,7 @@ function Workspace() {
 
     const { showAlert, Alert } = useAlert();
     const { showConfirmAlert, ConfirmAlert } = useConfirmAlert();
-    const [selected, setSelected] = useState(workspaces ? workspaces[0] : null);
+    const [selected, setSelected] = useState(workspaces[0]);
     const [showNewWorkspace, setShowNewWorkspace] = useState(false);
     const [showEditWorkspace, setShowEditWorkspace] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
@@ -65,23 +65,23 @@ function Workspace() {
 
     const deleteWorkspaceHandle = () => {
         const resolve = async () => {
-            const res = await deleteWorkspace(selected?._id);
+            const data = await deleteWorkspace(selected._id);
 
-            if (res.status == 'SUCCESS') {
-                const { data } = await getMyWorkspace();
+            if (data.deleteWorkspace.type == 'SUCCESS') {
+                const { myWorkspaces } = await getMyWorkspace();
 
-                setWorkspaces(data);
-                if (data.length >= 1) {
-                    setSelected(data[0]);
+                setWorkspaces(myWorkspaces);
+                if (myWorkspaces.length >= 1) {
+                    setSelected(myWorkspaces[0]);
                 }
 
                 showAlert({
-                    message: 'Delete workspace successfully',
+                    message: data.deleteWorkspace.message,
                     alertType: 'SUCCESS',
                 });
             } else {
                 showAlert({
-                    message: res.message,
+                    message: data.deleteWorkspace.message,
                     alertType: 'ERROR',
                 });
             }
@@ -95,14 +95,6 @@ function Workspace() {
             resolve,
         });
     };
-
-    // useEffect(() => {
-    //     showConfirmAlert({
-    //         message: 'Are you sure you want to delete this workspace?',
-    //         reject: () => console.log('reject'),
-    //         resolve: () => console.log('resolve'),
-    //     });
-    // }, []);
 
     return (
         <div className="relative">
