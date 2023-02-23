@@ -3,7 +3,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, EllipsisHorizontalIcon, TrashIcon } from '@heroicons/react/24/outline';
 
-import { deleteWorkspace, getWorkspacesByEmail } from '~/services/apis/workspace';
+import { deleteWorkspace, getMyWorkspace } from '~/services/apis/workspace';
 import { NewWorkSpaceForm, EditWorkspaceForm } from './components';
 import { useStore } from '~/store/hooks';
 import { useAlert, useConfirmAlert } from '~/components';
@@ -14,8 +14,8 @@ function Workspace() {
     const wrapperRef = useRef<HTMLDivElement>(null);
     useOutsideHandle(wrapperRef, () => setShowMenu(false));
 
-    const { getUser, setWorkspaces } = useStore();
-    const { workspaces, email } = getUser();
+    const { getUser, setWorkspaces, getWorkspaces } = useStore();
+    const workspaces = getWorkspaces();
 
     const { showAlert, Alert } = useAlert();
     const { showConfirmAlert, ConfirmAlert } = useConfirmAlert();
@@ -31,11 +31,11 @@ function Workspace() {
                 alertType: 'SUCCESS',
             });
 
-            const { data } = await getWorkspacesByEmail(email);
+            const { myWorkspaces } = await getMyWorkspace();
 
-            setWorkspaces(data);
-            if (data.length >= 1) {
-                setSelected(data[length - 1]);
+            setWorkspaces(myWorkspaces);
+            if (myWorkspaces.length >= 1) {
+                setSelected(myWorkspaces[length - 1]);
             }
         }
         setShowNewWorkspace(!showNewWorkspace);
@@ -49,13 +49,13 @@ function Workspace() {
                 alertType: 'SUCCESS',
             });
 
-            const { data } = await getWorkspacesByEmail(email);
+            const { myWorkspaces } = await getMyWorkspace();
 
-            setWorkspaces(data);
-            if (data.length >= 1) {
-                const currentWorkspaceId = selected?.workspaceId;
+            setWorkspaces(myWorkspaces);
+            if (myWorkspaces.length >= 1) {
+                const currentWorkspaceId = selected?._id;
 
-                const currentWorkspace = data.find((e: IWorkspace) => e.workspaceId == currentWorkspaceId);
+                const currentWorkspace = myWorkspaces.find((e: IWorkspace) => e._id == currentWorkspaceId);
                 setSelected(currentWorkspace);
             }
         }
@@ -65,10 +65,10 @@ function Workspace() {
 
     const deleteWorkspaceHandle = () => {
         const resolve = async () => {
-            const res = await deleteWorkspace(selected?.workspaceId);
+            const res = await deleteWorkspace(selected?._id);
 
             if (res.status == 'SUCCESS') {
-                const { data } = await getWorkspacesByEmail(email);
+                const { data } = await getMyWorkspace();
 
                 setWorkspaces(data);
                 if (data.length >= 1) {
@@ -121,7 +121,7 @@ function Workspace() {
                 <Listbox value={selected} onChange={setSelected}>
                     <div className="relative mt-1">
                         <Listbox.Button className="relative flex w-full cursor-pointer rounded-lg bg-primary py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                            <span className="block truncate font-bold">{selected?.workspaceName}</span>
+                            <span className="block truncate font-bold">{selected?.name}</span>
                         </Listbox.Button>
                         <span className="absolute inset-y-0 right-0 flex items-center pr-2">
                             <EllipsisHorizontalIcon
@@ -154,7 +154,7 @@ function Workspace() {
                                                         selected ? 'font-bold' : 'font-normal'
                                                     }`}
                                                 >
-                                                    {workspace?.workspaceName}
+                                                    {workspace?.name}
                                                 </span>
                                                 {selected ? (
                                                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">

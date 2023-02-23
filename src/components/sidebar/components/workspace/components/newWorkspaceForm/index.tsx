@@ -4,7 +4,7 @@ import { Button, useAlert } from '~/components';
 import { validateEmail, getUId } from '~/utils';
 import { useStore } from '~/store/hooks';
 import { addWorkspace } from '~/services/apis/workspace';
-import { getUserById } from '~/services/apis/user';
+import { getUserByEmail } from '~/services/apis/user';
 import { IUser } from '~/interfaces';
 import { useOutsideHandle } from '~/hooks';
 
@@ -36,10 +36,10 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
                     alertType: 'ERROR',
                 });
             } else {
-                const { status, data } = await getUserById(email);
+                const data = await getUserByEmail(email);
 
-                if (status == 'SUCCESS' && data) {
-                    setUsers([data, ...users]);
+                if (data.user) {
+                    setUsers([data.user, ...users]);
                     setEmail('');
                 } else {
                     showAlert({
@@ -70,17 +70,17 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
             });
             return;
         }
-        const { email } = getUser();
+        const { _id } = getUser();
 
-        const newWorkSpace = {
-            emails: [email, ...users.map((e) => e.email)],
-            workspaceName,
-            workspaceId: getUId(),
-            email,
+        const newWorkspace = {
+            collaborators: users.map((e) => e._id),
+            name: workspaceName,
+            host: _id,
         };
-        const { status } = await addWorkspace(newWorkSpace);
 
-        if (status == 'SUCCESS') {
+        const data = await addWorkspace(newWorkspace);
+
+        if (data.addWorkspace) {
             toggleNewWorkspaceForm(true);
         } else {
             toggleNewWorkspaceForm(false);
@@ -160,7 +160,7 @@ function UserItem({ user, deleteHandle }: UserItemProps) {
     return (
         <div className="flex w-full px-4 py-0.5 my-1 rounded-md shadow-md justify-between">
             <div className="flex">
-                <img src={user?.picture} className="h-6 w-6 rounded-full mr-2" />
+                <img src={user.picture || ''} className="h-6 w-6 rounded-full mr-2" />
                 <p>{user.email}</p>
             </div>
             <TrashIcon className="h-5 w-5 m-1 cursor-pointer" onClick={() => deleteHandle(user.email)} />

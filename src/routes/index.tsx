@@ -2,6 +2,7 @@ import { Outlet, createBrowserRouter } from 'react-router-dom';
 import { Home, Login, Error } from '~/pages';
 import { StoreProvider } from '~/store/storeProvider';
 import { Dashboard, Notification, Statistic } from '~/components';
+import { getMyWorkspace } from '~/services/apis/workspace';
 
 const AuthLayout = () => (
     <StoreProvider>

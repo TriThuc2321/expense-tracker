@@ -19,7 +19,7 @@ function Header() {
 
             <div className="flex mt-2">
                 <img src={user.picture || ''} className="h-6 w-6 rounded-full mr-2" />
-                <p>{user.fullName}</p>
+                <p>{user.name}</p>
             </div>
         </div>
     );

@@ -1,9 +1,42 @@
-import { request, METHODS } from '~/services/request';
-import { IUser } from '~/interfaces';
+import { graphQLRequest } from '~/services/request';
+import { INewUser } from '~/interfaces';
 
-const getUserById = async (email: string) => await request(`user/${email}`);
-const checkEmailExisted = async (email: string) => await request(`user/emailExisted/${email}`);
+const getUserByEmail = async (email: string) => {
+    const query = `query User($email: String!) {
+        user(email: $email) {
+          _id
+          email
+          name
+          picture
+          uid
+        }
+      }`;
 
-const addUser = async (user: IUser) => await request('user', METHODS.POST, user);
+    const data = await graphQLRequest({
+        query,
+        variables: { email },
+    });
 
-export { getUserById, addUser, checkEmailExisted };
+    return data;
+};
+
+const addNewUser = async (newUser: INewUser) => {
+    const query = `mutation AddUser($uid: String!, $email: String!, $picture: String, $name: String!) {
+        addUser(uid: $uid, email: $email, picture: $picture, name: $name) {
+          _id
+          email
+          name
+          picture
+          uid
+        }
+      }`;
+
+    const data = await graphQLRequest({
+        query,
+        variables: { ...newUser },
+    });
+
+    return data;
+};
+
+export { getUserByEmail, addNewUser };

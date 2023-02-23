@@ -24,10 +24,7 @@ const storeReducer = (state: IStore, action: STORE_ACTION): IStore => {
         case EStoreAction.SET_WORKSPACES:
             return {
                 ...state,
-                user: {
-                    ...state.user,
-                    workspaces: action.payload as Array<IWorkspace>,
-                },
+                workspaces: action.payload as Array<IWorkspace>,
             };
 
         default:

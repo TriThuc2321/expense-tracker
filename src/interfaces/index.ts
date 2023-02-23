@@ -1,25 +1,32 @@
-interface IUser {
-    userId: string;
-    fullName: string | undefined;
-    picture: string | undefined;
+interface INewUser {
+    uid: string;
+    name: string | null;
+    picture: string | null;
     email: string;
-    workspaces: Array<IWorkspace> | undefined;
+}
+
+interface IUser extends INewUser {
+    _id: string;
 }
 
 interface IWorkspace {
-    workspaceId: string;
-    workspaceName: string;
-    email: string;
+    _id: string;
+    name: string;
+    host: IUser;
+    collaborators: Array<IUser>;
+    bills: Array<IBill>;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface IProduct {
-    id: string;
+    _id: string;
     name: string;
     price: number;
 }
 
 interface IBill {
-    id: string;
+    _id: string;
     total: number;
     createAt: string;
     user: IUser;
@@ -31,7 +38,8 @@ interface IBill {
 
 interface IStore {
     user: IUser;
+    workspaces: Array<IWorkspace>;
     workspace: IWorkspace;
 }
 
-export type { IWorkspace, IProduct, IBill, IUser, IStore };
+export type { IWorkspace, IProduct, IBill, IUser, INewUser, IStore };

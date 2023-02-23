@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 
-import { addUser } from '~/services/apis/user';
+import { addNewUser } from '~/services/apis/user';
 
 function Login() {
     const auth = getAuth();
@@ -14,13 +14,13 @@ function Login() {
         } = await signInWithPopup(auth, provider);
 
         const newUser = {
-            fullName: displayName,
-            userId: uid,
+            name: displayName,
+            uid,
             email,
             picture: photoURL,
         };
 
-        addUser(newUser);
+        addNewUser(newUser);
     };
 
     if (localStorage.getItem('accessToken')) {

@@ -7,6 +7,7 @@ export const useStore = () => {
     return {
         store,
         getUser: () => store.user,
+        getWorkspaces: () => store.workspaces,
         setUser,
         setSelectWorkspace,
         setWorkspaces,

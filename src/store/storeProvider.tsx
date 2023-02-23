@@ -6,28 +6,31 @@ import { StoreContext } from './storeContext';
 import { IStore, IUser, IWorkspace } from '~/interfaces';
 import { Loader } from '~/pages';
 import { storeReducer, EStoreAction } from './storeReducer';
-import { getWorkspacesByEmail } from '~/services/apis/workspace';
+import { getMyWorkspace } from '~/services/apis/workspace';
+import { addNewUser } from '~/services/apis/user';
 
 interface ProviderProps {
     children: ReactNode;
 }
 
 const INIT_USER: IUser = {
-    userId: '',
-    fullName: '',
+    _id: '',
+    uid: '',
+    name: '',
     picture: '',
     email: '',
-    workspaces: [],
 };
 
 const INIT_WORKSPACE: IWorkspace = {
-    workspaceId: '',
-    workspaceName: '',
+    _id: '',
+    name: '',
+    host: INIT_USER,
 };
 
 const INIT_STATE: IStore = {
     user: INIT_USER,
     workspace: INIT_WORKSPACE,
+    workspaces: [],
 };
 
 export const StoreProvider = ({ children }: ProviderProps) => {
@@ -53,20 +56,22 @@ export const StoreProvider = ({ children }: ProviderProps) => {
         // auth.signOut();
         const authHandle = auth.onIdTokenChanged(async (user: any) => {
             if (user?.uid) {
-                const { uid, displayName, email, photoURL } = user;
-                const res = await getWorkspacesByEmail(email);
-                setUser({
-                    fullName: displayName,
-                    userId: uid,
-                    email,
-                    picture: photoURL,
-                    workspaces: res?.data,
-                });
-
                 if (user.accessToken !== localStorage.getItem('accessToken')) {
                     localStorage.setItem('accessToken', user.accessToken);
                     window.location.reload();
                 }
+                const { uid, displayName, email, photoURL } = user;
+                const newUser = {
+                    uid,
+                    name: displayName,
+                    email,
+                    picture: photoURL,
+                };
+                const resAddUser = await addNewUser(newUser);
+                setUser(resAddUser.addUser);
+
+                const resMyWorkspaces = await getMyWorkspace();
+                setWorkspaces(resMyWorkspaces.myWorkspaces);
             } else {
                 setUser(INIT_USER);
                 localStorage.clear();

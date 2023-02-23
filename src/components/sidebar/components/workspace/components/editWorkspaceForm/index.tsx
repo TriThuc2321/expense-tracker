@@ -5,7 +5,7 @@ import { Button, useAlert } from '~/components';
 import { validateEmail } from '~/utils';
 import { useStore } from '~/store/hooks';
 import { getUsersByWorkspaceId, updateWorkspace } from '~/services/apis/workspace';
-import { getUserById } from '~/services/apis/user';
+import { getUserByEmail } from '~/services/apis/user';
 import { IUser, IWorkspace } from '~/interfaces';
 import { useOutsideHandle } from '~/hooks';
 
@@ -22,22 +22,13 @@ export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }
     const { showAlert, Alert } = useAlert();
     const [users, setUsers] = useState<Array<IUser>>([]);
     const [email, setEmail] = useState<string>('');
-    const [workspaceName, setWorkspaceName] = useState<string>(workspace?.workspaceName || '');
+    const [workspaceName, setWorkspaceName] = useState<string>(workspace.name || '');
 
     const [inviteLoading, setInviteLoading] = useState(false);
     const [saveLoading, setSaveLoading] = useState(false);
 
     useEffect(() => {
-        const getWorkspace = async (id: string | undefined) => {
-            if (id) {
-                const res = await getUsersByWorkspaceId(id);
-                const { email } = getUser();
-                const users = res.data.filter((e: IUser) => e.email != email);
-                setUsers(users);
-            }
-        };
-
-        getWorkspace(workspace?.workspaceId);
+        setUsers(workspace.collaborators);
     }, []);
 
     const inviteHandle = async () => {
@@ -51,10 +42,10 @@ export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }
                     alertType: 'ERROR',
                 });
             } else {
-                const { status, data } = await getUserById(email);
+                const data = await getUserByEmail(email);
 
-                if (status == 'SUCCESS' && data) {
-                    setUsers([data, ...users]);
+                if (data.user) {
+                    setUsers([data.user, ...users]);
                     setEmail('');
                 } else {
                     showAlert({
@@ -85,17 +76,17 @@ export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }
             });
             return;
         }
-        const { email } = getUser();
+        const { _id } = workspace;
 
-        const newWorkSpace = {
-            workspaceId: workspace.workspaceId,
-            emails: [email, ...users.map((e) => e.email)],
-            workspaceName,
-            email,
+        const newWorkspace = {
+            collaborators: users.map((e) => e._id),
+            name: workspaceName,
+            _id,
         };
 
-        const { status } = await updateWorkspace(newWorkSpace);
-        if (status == 'SUCCESS') {
+        const data = await updateWorkspace(newWorkspace);
+
+        if (data.updateWorkspace) {
             toggleEditWorkspaceForm(true);
         } else {
             toggleEditWorkspaceForm(false);
@@ -175,7 +166,7 @@ function UserItem({ user, deleteHandle }: UserItemProps) {
     return (
         <div className="flex w-full px-4 py-0.5 my-1 rounded-md shadow-md justify-between">
             <div className="flex">
-                <img src={user?.picture} className="h-6 w-6 rounded-full mr-2" />
+                <img src={user.picture || ''} className="h-6 w-6 rounded-full mr-2" />
                 <p>{user.email}</p>
             </div>
             <TrashIcon className="h-5 w-5 m-1 cursor-pointer" onClick={() => deleteHandle(user)} />
