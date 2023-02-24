@@ -6,7 +6,7 @@ import styles from './Menu.module.scss';
 import { Link, useLocation } from 'react-router-dom';
 import Workspace from '../workspace';
 
-export default function Menu() {
+export default function Menu({ setHideMenu }: { setHideMenu: (arg0: boolean) => void }) {
     const listMenu = [
         {
             id: '0',
@@ -35,7 +35,14 @@ export default function Menu() {
         <div className="mt-8">
             <Workspace />
             {listMenu.map((menu) => (
-                <Link key={menu.id} to={menu.path} onClick={() => setActiveMenu(menu.path)}>
+                <Link
+                    key={menu.id}
+                    to={menu.path}
+                    onClick={() => {
+                        setActiveMenu(menu.path);
+                        setHideMenu(true);
+                    }}
+                >
                     <div
                         className={clsx(
                             { [styles.selected]: menu.path === activeMenu },

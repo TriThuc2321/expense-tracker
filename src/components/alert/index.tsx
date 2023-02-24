@@ -24,7 +24,7 @@ function Alert({ message, alertType }: IAlertProps) {
                 { ['bg-error']: alertType == 'ERROR' },
                 { ['bg-warning']: alertType == 'WARNING' },
                 { ['bg-info']: alertType == 'INFO' },
-                'flex items-center justify-between w-1/5 px-4 py-2 rounded-md text-white fixed bottom-4 left-4',
+                'flex items-center justify-between w-80 px-4 py-2 rounded-md text-white fixed bottom-4 left-4',
             )}
         >
             <p>{message}</p>

@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const colors = require('tailwindcss/colors');
 
 module.exports = {
@@ -20,6 +22,11 @@ module.exports = {
             height: {
                 0.5: '0.2px',
             },
+        },
+        screens: {
+            tablet: '640px',
+            laptop: '1024px',
+            desktop: '1280px',
         },
     },
     plugins: [],

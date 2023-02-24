@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button, useAlert } from '~/components';
 import { validateEmail } from '~/utils';
 import { useStore } from '~/store/hooks';
-import { getUsersByWorkspaceId, updateWorkspace } from '~/services/apis/workspace';
+import { updateWorkspace } from '~/services/apis/workspace';
 import { getUserByEmail } from '~/services/apis/user';
 import { IUser, IWorkspace } from '~/interfaces';
 import { useOutsideHandle } from '~/hooks';
@@ -95,33 +95,33 @@ export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }
     };
 
     return (
-        <div className="flex justify-center fixed top-0 bottom-0 left-0 right-0 py-20 px-96 text-primary z-10 bg-primary03">
+        <div className="flex justify-center fixed top-0 bottom-0 left-0 right-0 py-0 tablet:py-20 px-0 tablet:px-20 desktop:px-96 text-primary z-10 bg-primary03">
             <Alert />
             <div
-                className="relative z-10 bg-white w-2/3 h-full rounded-md shadow-md p-10 overflow-y-auto overflow-x-hidden"
+                className="relative z-10 bg-white w-full desktop:w-2/3 h-full rounded-md shadow-md p-10 overflow-y-auto overflow-x-hidden"
                 ref={wrapperRef}
             >
                 <div className="flex items-center">
                     <input
                         type="text"
                         placeholder="Workspace name..."
-                        className="mt-1 mr-1 px-4 py-2 block w-full font-bold rounded-md text-lg border-b-2"
+                        className="mr-1 px-4 py-2 block w-full font-bold rounded-md text-lg border-b-2"
                         onChange={(e) => setWorkspaceName(e.target.value)}
                         value={workspaceName}
                     />
-                    <div className="flex items-center">
+                    <div className="fixed bottom-4 right-0 left-0 px-4 tablet:px-0 tablet:relative tablet:pt-4 flex items-center">
                         <Button
                             text="Cancel"
                             outline
                             status="ACTIVE"
-                            className="mx-2"
+                            className="w-1/2 mr-2"
                             onClick={() => toggleEditWorkspaceForm(false)}
                         />
                         <Button
                             text="Update"
                             outline={false}
                             status={saveLoading ? 'LOADING' : 'ACTIVE'}
-                            className=""
+                            className="w-1/2 ml-2"
                             onClick={saveHandle}
                         />
                     </div>

@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState, useEffect } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, EllipsisHorizontalIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -14,7 +14,7 @@ function Workspace() {
     const wrapperRef = useRef<HTMLDivElement>(null);
     useOutsideHandle(wrapperRef, () => setShowMenu(false));
 
-    const { getUser, setWorkspaces, getWorkspaces } = useStore();
+    const { setWorkspaces, getWorkspaces } = useStore();
     const workspaces = getWorkspaces();
 
     const { showAlert, Alert } = useAlert();
