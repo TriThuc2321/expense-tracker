@@ -1,6 +1,6 @@
 import { graphQLRequest } from '../request';
 
-const billsLoader = async ({ params: { workspaceId } }: any) => {
+const billsLoader = async (workspaceId: string) => {
     const query = `query Query($workspaceId: String!) {
       bills(workspaceId: $workspaceId) {
         _id

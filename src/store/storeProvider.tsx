@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
 import { StoreContext } from './storeContext';
-import { IStore, IUser, IWorkspace } from '~/interfaces';
+import { IStore, IUser, IWorkspace, IBill } from '~/interfaces';
 import { Loader } from '~/pages';
 import { storeReducer, EStoreAction } from './storeReducer';
 import { getMyWorkspace } from '~/services/apis/workspace';
@@ -37,6 +37,7 @@ const INIT_STATE: IStore = {
     user: INIT_USER,
     selectedWorkspace: INIT_WORKSPACE,
     workspaces: [],
+    bills: [],
 };
 
 export const StoreProvider = ({ children }: ProviderProps) => {
@@ -56,6 +57,10 @@ export const StoreProvider = ({ children }: ProviderProps) => {
 
     const setWorkspaces = (workspaces: Array<IWorkspace>) => {
         dispatch({ type: EStoreAction.SET_WORKSPACES, payload: workspaces });
+    };
+
+    const setBills = (bills: Array<IBill>) => {
+        dispatch({ type: EStoreAction.SET_BillS, payload: bills });
     };
 
     useEffect(() => {
@@ -90,7 +95,7 @@ export const StoreProvider = ({ children }: ProviderProps) => {
     }, [auth]);
 
     return (
-        <StoreContext.Provider value={{ store, setUser, setSelectedWorkspace, setWorkspaces }}>
+        <StoreContext.Provider value={{ store, setUser, setSelectedWorkspace, setWorkspaces, setBills }}>
             {loading ? <Loader /> : children}
         </StoreContext.Provider>
     );

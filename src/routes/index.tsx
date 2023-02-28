@@ -31,7 +31,6 @@ export default createBrowserRouter([
                             {
                                 path: 'workspace/:workspaceId',
                                 element: <Bills />,
-                                loader: billsLoader,
                                 children: [
                                     {
                                         path: 'bill/:billId',

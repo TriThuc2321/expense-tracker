@@ -1,25 +1,36 @@
-import { PlusIcon } from '@heroicons/react/24/outline';
-
-import BillDetail from '../dashboard/components/billDetail/index';
+import { BillDetail } from '~/components';
 import { useStore } from '~/store/hooks';
-import { useLoaderData, useSearchParams, useParams, useNavigate, Outlet } from 'react-router-dom';
+import { useParams, useNavigate, Outlet } from 'react-router-dom';
 import { IBill } from '~/interfaces';
-import { createBill } from '~/services/apis/bill';
+import { createBill, billsLoader } from '~/services/apis/bill';
+import { useEffect } from 'react';
+
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 export default function Bills() {
     const navigate = useNavigate();
     const { workspaceId } = useParams();
 
-    const { getUser } = useStore();
-    const { bills } = useLoaderData() as { bills: [IBill] };
+    const { getUser, getBills, setBills } = useStore();
+    const bills = getBills();
 
     const handleCreateBill = async () => {
         const { _id } = getUser();
         if (_id && workspaceId) {
             const data = await createBill(_id, workspaceId);
-            console.log(data);
+            navigate(`bill/${data.addBill._id}`);
         }
     };
+
+    useEffect(() => {
+        const fetchBills = async () => {
+            if (workspaceId) {
+                const { bills } = await billsLoader(workspaceId);
+                setBills(bills);
+            }
+        };
+        fetchBills();
+    }, [workspaceId]);
 
     return (
         <div className="mt-4 px-20 grid grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 desktop:grid-cols-4 gap-4 w-full h-5/6 overflow-y-auto">

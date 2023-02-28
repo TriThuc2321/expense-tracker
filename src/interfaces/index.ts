@@ -42,6 +42,7 @@ interface IBill {
 interface IStore {
     user: IUser;
     workspaces: Array<IWorkspace>;
+    bills: Array<IBill>;
     selectedWorkspace: IWorkspace;
 }
 

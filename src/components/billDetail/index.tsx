@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react';
 
 import { formatVND } from '~/utils';
 import { IBill, IProduct } from '~/interfaces';
-import ProductDetail from './../productDetail/index';
+import { ProductDetail } from '~/components';
+import { useNavigate } from 'react-router-dom';
 
 interface IPrice {
     total: number;
     totalGeneral: number;
     totalSpecific: number;
 }
+
 export default function BillDetail(billDetail: IBill) {
+    const navigate = useNavigate();
     const [prices, setPrices] = useState<IPrice>({
         total: 0,
         totalGeneral: 0,
@@ -24,7 +27,10 @@ export default function BillDetail(billDetail: IBill) {
     }, []);
 
     return (
-        <div className="cursor-pointer relative px-4 py-2 overflow-hidden h-72 bg-gray-200 text-primary drop-shadow-[0_3px_3px_rgba(255,255,255,0.25)] rounded-md">
+        <div
+            className="cursor-pointer relative px-4 py-2 overflow-hidden h-72 bg-gray-200 text-primary drop-shadow-[0_3px_3px_rgba(255,255,255,0.25)] rounded-md"
+            onClick={() => navigate(`bill/${billDetail._id}`)}
+        >
             {billDetail.generals.length > 0 && (
                 <ProductSection productType="generals" products={billDetail.generals} total={prices.totalGeneral} />
             )}

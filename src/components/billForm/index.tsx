@@ -1,19 +1,20 @@
-import React, { ChangeEvent, Fragment, useEffect, useState } from 'react';
+import { ChangeEvent, Fragment, useEffect, useState } from 'react';
 import moment from 'moment';
-import { TrashIcon, PlusIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PlusIcon, ChevronUpDownIcon, BackspaceIcon } from '@heroicons/react/24/outline';
 
 import { IProduct, IBill, IUser } from '~/interfaces';
 import { Button } from '~/components';
 import { Listbox, Transition } from '@headlessui/react';
-import { useSearchParams, useLoaderData, useParams } from 'react-router-dom';
+import { useLoaderData, useParams, useNavigate } from 'react-router-dom';
 import { getCollaborators } from '~/services/apis/user';
 import { useStore } from '~/store/hooks';
+import { billsLoader } from '~/services/apis/bill';
 
 export default function BillForm() {
     const { bill } = useLoaderData() as { bill: IBill };
     const { workspaceId } = useParams();
-    const { getUser } = useStore();
-    const [searchParams, setSearchparams] = useSearchParams();
+    const { getUser, setBills } = useStore();
+    const navigate = useNavigate();
 
     const [collaborators, setCollaborators] = useState<Array<IUser>>([]);
     const [generals, setGenerals] = useState<Array<IProduct>>(bill.generals);
@@ -29,8 +30,15 @@ export default function BillForm() {
         // setSpecifics([{ _id, name: '', price: 0 }, ...specifics]);
     };
 
-    const saveHandle = () => {
-        console.log('save');
+    const handleTurnBack = async () => {
+        const fetchBills = async () => {
+            if (workspaceId) {
+                const { bills } = await billsLoader(workspaceId);
+                setBills(bills);
+                navigate(`/workspace/${workspaceId}`);
+            }
+        };
+        fetchBills();
     };
 
     useEffect(() => {
@@ -47,16 +55,23 @@ export default function BillForm() {
         <div className="fixed top-0 bottom-0 left-0 right-0 tablet:py-10 tablet:px-20 desktop:py-20 desktop:px-60 text-primary z-10">
             <div className="relative bg-white w-full h-full rounded-lg shadow-md py-4 px-6 tablet:p-10 overflow-y-auto">
                 <div className="flex justify-between">
-                    <p> {moment(bill.createdAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
+                    <div className="flex flex-col">
+                        <div className="flex">
+                            <img src={bill.buyer.picture || ''} className="h-6 w-6 rounded-full mr-2" />
+                            <p>{bill.buyer.name}</p>
+                        </div>
+                        <p> {moment(bill.createdAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
+                    </div>
+
                     <div className="hidden tablet:flex items-center">
+                        <Button text="Remove" outline status="ACTIVE" className="mr-4 " onClick={handleTurnBack} />
                         <Button
                             text="Cancel"
-                            outline
+                            outline={false}
                             status="ACTIVE"
                             className="mr-4"
-                            onClick={() => setSearchparams()}
+                            onClick={handleTurnBack}
                         />
-                        <Button text="Save" outline={false} status="ACTIVE" className="" onClick={saveHandle} />
                     </div>
                 </div>
 
@@ -96,14 +111,7 @@ export default function BillForm() {
                 </div>
 
                 <div className="flex items-center fixed bottom-4 left-4 right-4 tablet:hidden">
-                    <Button
-                        text="Cancel"
-                        outline
-                        status="ACTIVE"
-                        className="mr-2 w-full"
-                        onClick={() => setSearchparams()}
-                    />
-                    <Button text="Save" outline={false} status="ACTIVE" className="ml-2 w-full" onClick={saveHandle} />
+                    <Button text="Cancel" outline status="ACTIVE" className="mr-2 w-full" onClick={handleTurnBack} />
                 </div>
             </div>
         </div>
