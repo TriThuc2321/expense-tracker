@@ -1,7 +1,8 @@
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useRef, useState, useEffect } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, EllipsisHorizontalIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
 
 import { deleteWorkspace, getMyWorkspace } from '~/services/apis/workspace';
 import { NewWorkSpaceForm, EditWorkspaceForm } from './components';
@@ -14,6 +15,11 @@ function Workspace() {
     const wrapperRef = useRef<HTMLDivElement>(null);
     useOutsideHandle(wrapperRef, () => setShowMenu(false));
 
+    const [searchParams, setSearchparams] = useSearchParams();
+    const navigate = useNavigate();
+    const { workspaceId } = useParams();
+    const popup = searchParams.get('popup');
+
     const { setWorkspaces, getWorkspaces } = useStore();
     const workspaces = getWorkspaces();
 
@@ -24,45 +30,6 @@ function Workspace() {
     const [showEditWorkspace, setShowEditWorkspace] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
 
-    const toggleNewWorkspaceForm = async (success: boolean) => {
-        if (success) {
-            showAlert({
-                message: 'Create workspace successfully',
-                alertType: 'SUCCESS',
-            });
-
-            const { myWorkspaces } = await getMyWorkspace();
-
-            setWorkspaces(myWorkspaces);
-            if (myWorkspaces.length >= 1) {
-                setSelected(myWorkspaces[length - 1]);
-            }
-        }
-        setShowNewWorkspace(!showNewWorkspace);
-        setShowMenu(false);
-    };
-
-    const toggleEditWorkspaceForm = async (success: boolean) => {
-        if (success) {
-            showAlert({
-                message: 'Update workspace successfully',
-                alertType: 'SUCCESS',
-            });
-
-            const { myWorkspaces } = await getMyWorkspace();
-
-            setWorkspaces(myWorkspaces);
-            if (myWorkspaces.length >= 1) {
-                const currentWorkspaceId = selected?._id;
-
-                const currentWorkspace = myWorkspaces.find((e: IWorkspace) => e._id == currentWorkspaceId);
-                setSelected(currentWorkspace);
-            }
-        }
-        setShowEditWorkspace(!showEditWorkspace);
-        setShowMenu(false);
-    };
-
     const deleteWorkspaceHandle = () => {
         const resolve = async () => {
             const data = await deleteWorkspace(selected._id);
@@ -72,7 +39,9 @@ function Workspace() {
 
                 setWorkspaces(myWorkspaces);
                 if (myWorkspaces.length >= 1) {
-                    setSelected(myWorkspaces[0]);
+                    navigate(`workspace/${myWorkspaces[0]._id}`);
+                } else {
+                    navigate('/');
                 }
 
                 showAlert({
@@ -96,21 +65,47 @@ function Workspace() {
         });
     };
 
+    useEffect(() => {
+        if (popup === 'create-workspace') {
+            setShowNewWorkspace(true);
+        } else {
+            setShowNewWorkspace(false);
+        }
+        if (popup === 'edit-workspace') {
+            setShowEditWorkspace(true);
+        } else {
+            setShowEditWorkspace(false);
+        }
+    }, [popup]);
+
+    useEffect(() => {
+        if (workspaceId) {
+            const workspace = workspaces.find((e) => e._id === workspaceId);
+            if (workspace) {
+                setSelected(workspace);
+            } else {
+                navigate('/');
+            }
+        } else {
+            if (workspaces.length > 0) {
+                navigate(`workspace/${workspaces[0]._id}`);
+            }
+        }
+    }, [workspaceId, workspaces]);
+
     return (
-        <div className="relative">
+        <div className="relative mt-4">
             <Alert />
             <ConfirmAlert />
-            {showNewWorkspace && <NewWorkSpaceForm toggleNewWorkspaceForm={toggleNewWorkspaceForm} />}
-            {selected && showEditWorkspace && (
-                <EditWorkspaceForm toggleEditWorkspaceForm={toggleEditWorkspaceForm} workspace={selected} />
-            )}
+            {showNewWorkspace && <NewWorkSpaceForm />}
+            {selected && showEditWorkspace && <EditWorkspaceForm workspace={selected} />}
 
             {workspaces?.length == 0 ? (
-                <p className="cursor-pointer" onClick={() => toggleNewWorkspaceForm(false)}>
+                <p className="cursor-pointer" onClick={() => setSearchparams({ popup: 'create-workspace' })}>
                     Create new workspace
                 </p>
             ) : (
-                <Listbox value={selected} onChange={setSelected}>
+                <Listbox value={selected} onChange={(value) => navigate(`/workspace/${value._id}`)}>
                     <div className="relative mt-1">
                         <Listbox.Button className="relative flex w-full cursor-pointer rounded-lg bg-primary py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                             <span className="block truncate font-bold">{selected?.name}</span>
@@ -170,7 +165,7 @@ function Workspace() {
                 >
                     <div
                         className="my-2 flex items-center justify-end cursor-pointer"
-                        onClick={() => toggleNewWorkspaceForm(false)}
+                        onClick={() => setSearchparams({ popup: 'create-workspace' })}
                     >
                         <p>New workspace</p>
                         <PlusIcon className="h-5 w-5 text-white ml-2" aria-hidden="true" />
@@ -178,7 +173,7 @@ function Workspace() {
 
                     <div
                         className="my-2 flex items-center justify-end cursor-pointer"
-                        onClick={() => toggleEditWorkspaceForm(false)}
+                        onClick={() => setSearchparams({ popup: 'edit-workspace' })}
                     >
                         <p>Edit workspace</p>
                         <PencilSquareIcon className="h-5 w-5 text-white ml-2" aria-hidden="true" />

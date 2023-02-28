@@ -4,21 +4,24 @@ import { useState, useEffect, useRef } from 'react';
 import { Button, useAlert } from '~/components';
 import { validateEmail } from '~/utils';
 import { useStore } from '~/store/hooks';
-import { updateWorkspace } from '~/services/apis/workspace';
+import { getMyWorkspace, updateWorkspace } from '~/services/apis/workspace';
 import { getUserByEmail } from '~/services/apis/user';
 import { IUser, IWorkspace } from '~/interfaces';
 import { useOutsideHandle } from '~/hooks';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface IEditWorkSpaceFormProps {
-    toggleEditWorkspaceForm: (success: boolean) => void;
     workspace: IWorkspace;
 }
 
-export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }: IEditWorkSpaceFormProps) {
+export default function EditWorkspaceForm({ workspace }: IEditWorkSpaceFormProps) {
     const wrapperRef = useRef<HTMLDivElement>(null);
-    useOutsideHandle(wrapperRef, () => toggleEditWorkspaceForm(false));
+    useOutsideHandle(wrapperRef, () => setSearchParams());
 
-    const { getUser } = useStore();
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const { getUser, setWorkspaces } = useStore();
     const { showAlert, Alert } = useAlert();
     const [users, setUsers] = useState<Array<IUser>>([]);
     const [email, setEmail] = useState<string>('');
@@ -87,9 +90,9 @@ export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }
         const data = await updateWorkspace(newWorkspace);
 
         if (data.updateWorkspace) {
-            toggleEditWorkspaceForm(true);
-        } else {
-            toggleEditWorkspaceForm(false);
+            const { myWorkspaces } = await getMyWorkspace();
+            setWorkspaces(myWorkspaces);
+            navigate(`workspace/${data.updateWorkspace._id}`);
         }
         setSaveLoading(false);
     };
@@ -115,7 +118,7 @@ export default function EditWorkspaceForm({ toggleEditWorkspaceForm, workspace }
                             outline
                             status="ACTIVE"
                             className="w-1/2 mr-2"
-                            onClick={() => toggleEditWorkspaceForm(false)}
+                            onClick={() => setSearchParams()}
                         />
                         <Button
                             text="Update"

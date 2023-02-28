@@ -3,20 +3,19 @@ import { useRef, useState } from 'react';
 import { Button, useAlert } from '~/components';
 import { validateEmail, getUId } from '~/utils';
 import { useStore } from '~/store/hooks';
-import { addWorkspace } from '~/services/apis/workspace';
+import { addWorkspace, getMyWorkspace } from '~/services/apis/workspace';
 import { getUserByEmail } from '~/services/apis/user';
 import { IUser } from '~/interfaces';
 import { useOutsideHandle } from '~/hooks';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-interface INewWorkSpaceFormProps {
-    toggleNewWorkspaceForm: (success: boolean) => void;
-}
-
-export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpaceFormProps) {
+export default function NewWorkSpaceForm() {
     const wrapperRef = useRef<HTMLDivElement>(null);
-    useOutsideHandle(wrapperRef, () => toggleNewWorkspaceForm(false));
+    useOutsideHandle(wrapperRef, () => setSearchParams());
 
-    const { getUser } = useStore();
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { getUser, setWorkspaces } = useStore();
     const { showAlert, Alert } = useAlert();
     const [users, setUsers] = useState<Array<IUser>>([]);
     const [email, setEmail] = useState<string>('');
@@ -81,9 +80,16 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
         const data = await addWorkspace(newWorkspace);
 
         if (data.addWorkspace) {
-            toggleNewWorkspaceForm(true);
+            showAlert({
+                message: 'Create workspace successfully',
+                alertType: 'SUCCESS',
+            });
+
+            const { myWorkspaces } = await getMyWorkspace();
+            setWorkspaces(myWorkspaces);
+            navigate(`workspace/${data.addWorkspace._id}`);
         } else {
-            toggleNewWorkspaceForm(false);
+            setSearchParams();
         }
         setSaveLoading(false);
     };
@@ -109,7 +115,7 @@ export default function NewWorkSpaceForm({ toggleNewWorkspaceForm }: INewWorkSpa
                             outline
                             status="ACTIVE"
                             className="w-1/2 mr-2"
-                            onClick={() => toggleNewWorkspaceForm(false)}
+                            onClick={() => setSearchParams({})}
                         />
                         <Button
                             text="Save"
