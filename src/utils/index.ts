@@ -5,4 +5,6 @@ const validateEmail = (email: string) => {
     return email.match(validRegex);
 };
 
-export { getUId, validateEmail };
+const formatVND = (price: number) => new Intl.NumberFormat('vi-VN').format(price) + 'đ';
+
+export { getUId, validateEmail, formatVND };

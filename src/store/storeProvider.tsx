@@ -19,17 +19,23 @@ const INIT_USER: IUser = {
     name: '',
     picture: '',
     email: '',
+    createdAt: '',
+    updatedAt: '',
 };
 
 const INIT_WORKSPACE: IWorkspace = {
     _id: '',
     name: '',
     host: INIT_USER,
+    bills: [],
+    collaborators: [],
+    createdAt: '',
+    updatedAt: '',
 };
 
 const INIT_STATE: IStore = {
     user: INIT_USER,
-    workspace: INIT_WORKSPACE,
+    selectedWorkspace: INIT_WORKSPACE,
     workspaces: [],
 };
 
@@ -44,7 +50,7 @@ export const StoreProvider = ({ children }: ProviderProps) => {
         dispatch({ type: EStoreAction.SET_USER, payload: user });
     };
 
-    const setSelectWorkspace = (workspace: IWorkspace) => {
+    const setSelectedWorkspace = (workspace: IWorkspace) => {
         dispatch({ type: EStoreAction.SET_SELECTED_WORKSPACE, payload: workspace });
     };
 
@@ -84,7 +90,7 @@ export const StoreProvider = ({ children }: ProviderProps) => {
     }, [auth]);
 
     return (
-        <StoreContext.Provider value={{ store, setUser, setSelectWorkspace, setWorkspaces }}>
+        <StoreContext.Provider value={{ store, setUser, setSelectedWorkspace, setWorkspaces }}>
             {loading ? <Loader /> : children}
         </StoreContext.Provider>
     );

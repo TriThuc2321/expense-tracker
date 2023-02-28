@@ -7,6 +7,8 @@ interface INewUser {
 
 interface IUser extends INewUser {
     _id: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface IWorkspace {
@@ -23,23 +25,24 @@ interface IProduct {
     _id: string;
     name: string;
     price: number;
+    buyer: IUser;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface IBill {
     _id: string;
-    total: number;
-    createAt: string;
-    user: IUser;
+    buyer: IUser;
     generals: Array<IProduct>;
-    generalTotal: number;
-    specificTotal: number;
     specifics: Array<IProduct>;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface IStore {
     user: IUser;
     workspaces: Array<IWorkspace>;
-    workspace: IWorkspace;
+    selectedWorkspace: IWorkspace;
 }
 
 export type { IWorkspace, IProduct, IBill, IUser, INewUser, IStore };

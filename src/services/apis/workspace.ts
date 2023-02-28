@@ -1,26 +1,24 @@
-import { graphQLRequest, request, METHODS } from '~/services/request';
-import { IWorkspace } from '~/interfaces';
+import { graphQLRequest } from '~/services/request';
 
 const getMyWorkspace = async () => {
-    const query = `query MyWorkspaces {
+    const query = `query Query {
       myWorkspaces {
         _id
-        collaborators {
-          picture
-          _id
-          email
-          name
-          uid
-        }
-        createdAt
-        host {
-          email
-          _id
-          name
-          picture
-          uid
-        }
         name
+        collaborators {
+          _id
+          uid
+          name
+          picture
+          email
+        }
+        host {
+          _id
+          uid
+          name
+          picture
+          email
+        }
         updatedAt
       }
     }`;
@@ -31,6 +29,7 @@ const getMyWorkspace = async () => {
 
     return data;
 };
+
 const getUsersByWorkspaceId = async (workspaceId: string) => {
     const query = `query Query($workspaceId: String!) {
       users(workspaceId: $workspaceId) {
@@ -94,7 +93,7 @@ const updateWorkspace = async ({ name, _id, collaborators }: IUpdateWorkspacePro
     return data;
 };
 
-const deleteWorkspace = async (_id: string) => {
+const deleteWorkspace = async (_id: string | undefined) => {
     const query = `mutation DeleteWorkspace($id: String!) {
       deleteWorkspace(_id: $id) {
         message

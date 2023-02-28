@@ -19,7 +19,7 @@ const storeReducer = (state: IStore, action: STORE_ACTION): IStore => {
         case EStoreAction.SET_SELECTED_WORKSPACE:
             return {
                 ...state,
-                workspace: action.payload as IWorkspace,
+                selectedWorkspace: action.payload as IWorkspace,
             };
         case EStoreAction.SET_WORKSPACES:
             return {

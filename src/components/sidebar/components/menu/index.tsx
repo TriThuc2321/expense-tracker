@@ -4,8 +4,6 @@ import { CodeBracketIcon, BellIcon, ChartBarIcon } from '@heroicons/react/24/out
 import clsx from 'clsx';
 import styles from './Menu.module.scss';
 import { Link, useLocation } from 'react-router-dom';
-import Workspace from '../workspace';
-
 export default function Menu({ setHideMenu }: { setHideMenu: (arg0: boolean) => void }) {
     const listMenu = [
         {
@@ -33,7 +31,6 @@ export default function Menu({ setHideMenu }: { setHideMenu: (arg0: boolean) => 
 
     return (
         <div className="mt-8">
-            <Workspace />
             {listMenu.map((menu) => (
                 <Link
                     key={menu.id}

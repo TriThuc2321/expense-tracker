@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import { Menu, Footer, Header } from './components';
 import clsx from 'clsx';
+import { Workspace } from './components';
 
 export default function Sidebar() {
     const [hideMenu, setHideMenu] = useState(true);
+
     return (
         <div>
             <div
@@ -14,6 +16,7 @@ export default function Sidebar() {
                 )}
             >
                 <Header setHideMenu={setHideMenu} />
+                <Workspace />
                 <Menu setHideMenu={setHideMenu} />
                 <Footer />
             </div>
