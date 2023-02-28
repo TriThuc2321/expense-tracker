@@ -1,6 +1,6 @@
 import { ChangeEvent, Fragment, useEffect, useState } from 'react';
 import moment from 'moment';
-import { TrashIcon, PlusIcon, ChevronUpDownIcon, BackspaceIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PlusIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
 
 import { IProduct, IBill, IUser } from '~/interfaces';
 import { Button } from '~/components';
@@ -8,7 +8,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { useLoaderData, useParams, useNavigate } from 'react-router-dom';
 import { getCollaborators } from '~/services/apis/user';
 import { useStore } from '~/store/hooks';
-import { billsLoader } from '~/services/apis/bill';
+import { billsLoader, deleteBill } from '~/services/apis/bill';
 
 export default function BillForm() {
     const { bill } = useLoaderData() as { bill: IBill };
@@ -30,15 +30,20 @@ export default function BillForm() {
         // setSpecifics([{ _id, name: '', price: 0 }, ...specifics]);
     };
 
+    const handleDelete = async () => {
+        const data = await deleteBill(bill._id);
+
+        if (data) {
+            handleTurnBack();
+        }
+    };
+
     const handleTurnBack = async () => {
-        const fetchBills = async () => {
-            if (workspaceId) {
-                const { bills } = await billsLoader(workspaceId);
-                setBills(bills);
-                navigate(`/workspace/${workspaceId}`);
-            }
-        };
-        fetchBills();
+        if (workspaceId) {
+            const { bills } = await billsLoader(workspaceId);
+            setBills(bills);
+            navigate(`/workspace/${workspaceId}`);
+        }
     };
 
     useEffect(() => {
@@ -64,7 +69,7 @@ export default function BillForm() {
                     </div>
 
                     <div className="hidden tablet:flex items-center">
-                        <Button text="Remove" outline status="ACTIVE" className="mr-4 " onClick={handleTurnBack} />
+                        <Button text="Remove" outline status="ACTIVE" className="mr-4 " onClick={handleDelete} />
                         <Button
                             text="Cancel"
                             outline={false}

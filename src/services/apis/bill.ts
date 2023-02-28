@@ -113,4 +113,20 @@ const createBill = async (buyerId: string, workspaceId: string) => {
     return data;
 };
 
-export { billsLoader, billLoader, createBill };
+const deleteBill = async (billId: string) => {
+    const query = `mutation DeleteBill($billId: String!) {
+      deleteBill(billId: $billId) {
+        type
+        message
+      }
+    }`;
+
+    const data = await graphQLRequest({
+        query,
+        variables: { billId },
+    });
+
+    return data;
+};
+
+export { billsLoader, billLoader, createBill, deleteBill };
