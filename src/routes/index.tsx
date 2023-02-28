@@ -1,9 +1,9 @@
-import { Outlet, createBrowserRouter, Navigate } from 'react-router-dom';
+import { Outlet, createBrowserRouter } from 'react-router-dom';
 import { Home, Login, Error } from '~/pages';
 import { StoreProvider } from '~/store/storeProvider';
 import { Dashboard, Notification, Statistic } from '~/components';
-import { getMyWorkspace } from '~/services/apis/workspace';
-import { billsLoader } from './../services/apis/bill';
+import { billLoader, billsLoader } from '~/services/apis/bill';
+import { Bills, BillForm } from '~/components';
 
 const AuthLayout = () => (
     <StoreProvider>
@@ -23,19 +23,25 @@ export default createBrowserRouter([
             {
                 path: '/',
                 element: <Home />,
-                loader: getMyWorkspace,
                 children: [
                     {
                         path: '/',
                         element: <Dashboard />,
-                        loader: billsLoader,
+                        children: [
+                            {
+                                path: 'workspace/:workspaceId',
+                                element: <Bills />,
+                                loader: billsLoader,
+                                children: [
+                                    {
+                                        path: 'bill/:billId',
+                                        element: <BillForm />,
+                                        loader: billLoader,
+                                    },
+                                ],
+                            },
+                        ],
                     },
-                    {
-                        path: '/workspace/:workspaceId',
-                        element: <Dashboard />,
-                        loader: billsLoader,
-                    },
-
                     {
                         path: '/notification',
                         element: <Notification />,

@@ -25,8 +25,12 @@ export default function BillDetail(billDetail: IBill) {
 
     return (
         <div className="cursor-pointer relative px-4 py-2 overflow-hidden h-72 bg-gray-200 text-primary drop-shadow-[0_3px_3px_rgba(255,255,255,0.25)] rounded-md">
-            <ProductSection productType="generals" products={billDetail.generals} total={prices.totalGeneral} />
-            <ProductSection productType="specifics" products={billDetail.specifics} total={prices.totalSpecific} />
+            {billDetail.generals.length > 0 && (
+                <ProductSection productType="generals" products={billDetail.generals} total={prices.totalGeneral} />
+            )}
+            {billDetail.specifics.length > 0 && (
+                <ProductSection productType="specifics" products={billDetail.specifics} total={prices.totalSpecific} />
+            )}
 
             <div className="py-2 px-4 absolute bottom-0 left-0 right-0 flex items-center bg-white justify-between">
                 <img src={billDetail.buyer.picture || ''} className="h-6 w-6 rounded-full" />

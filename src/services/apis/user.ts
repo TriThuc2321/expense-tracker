@@ -39,4 +39,23 @@ const addNewUser = async (newUser: INewUser) => {
     return data;
 };
 
-export { getUserByEmail, addNewUser };
+const getCollaborators = async (workspaceId: string) => {
+    const query = `query Query($workspaceId: String!) {
+      collaborators(workspaceId: $workspaceId) {
+        _id
+        uid
+        name
+        picture
+        email
+      }
+    }`;
+
+    const data = await graphQLRequest({
+        query,
+        variables: { workspaceId },
+    });
+
+    return data;
+};
+
+export { getUserByEmail, addNewUser, getCollaborators };

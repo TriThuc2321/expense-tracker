@@ -17,6 +17,7 @@
         "draftjs-to-html": "^0.9.1",
         "firebase": "^9.15.0",
         "jwt-decode": "^3.1.2",
+        "moment": "^2.29.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-draft-wysiwyg": "^1.15.0",
