@@ -77,7 +77,7 @@ export const StoreProvider = ({ children }: ProviderProps) => {
                 const resAddUser = await addNewUser(newUser);
                 setUser(resAddUser.addUser);
 
-                const resMyWorkspaces = await getMyWorkspace();
+                const resMyWorkspaces = await getMyWorkspace(resAddUser.addUser._id);
                 setWorkspaces(resMyWorkspaces.myWorkspaces);
             } else {
                 setUser(INIT_USER);

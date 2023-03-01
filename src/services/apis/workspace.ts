@@ -1,8 +1,8 @@
 import { graphQLRequest } from '~/services/request';
 
-const getMyWorkspace = async () => {
-    const query = `query Query {
-      myWorkspaces {
+const getMyWorkspace = async (userId: string) => {
+    const query = `query Query($userId: String!) {
+      myWorkspaces(userId: $userId) {
         _id
         name
         collaborators {
@@ -25,6 +25,7 @@ const getMyWorkspace = async () => {
 
     const data = await graphQLRequest({
         query,
+        variables: { userId },
     });
 
     return data;

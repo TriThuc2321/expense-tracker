@@ -4,6 +4,10 @@ import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { addNewUser } from '~/services/apis/user';
 
 function Login() {
+    if (localStorage.getItem('accessToken')) {
+        return <Navigate to="/" />;
+    }
+
     const auth = getAuth();
 
     const handleLoginWithGoogle = async () => {
@@ -22,10 +26,6 @@ function Login() {
 
         addNewUser(newUser);
     };
-
-    if (localStorage.getItem('accessToken')) {
-        return <Navigate to="/" />;
-    }
 
     return (
         <div className="flex justify-center items-center w-screen h-screen">

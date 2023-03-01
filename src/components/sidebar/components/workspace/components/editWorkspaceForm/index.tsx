@@ -90,7 +90,8 @@ export default function EditWorkspaceForm({ workspace }: IEditWorkSpaceFormProps
         const data = await updateWorkspace(newWorkspace);
 
         if (data.updateWorkspace) {
-            const { myWorkspaces } = await getMyWorkspace();
+            const { _id } = getUser();
+            const { myWorkspaces } = await getMyWorkspace(_id);
             setWorkspaces(myWorkspaces);
             navigate(`workspace/${data.updateWorkspace._id}`);
         }

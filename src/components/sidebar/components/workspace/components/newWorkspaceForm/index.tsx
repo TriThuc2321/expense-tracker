@@ -85,7 +85,8 @@ export default function NewWorkSpaceForm() {
                 alertType: 'SUCCESS',
             });
 
-            const { myWorkspaces } = await getMyWorkspace();
+            const { _id } = getUser();
+            const { myWorkspaces } = await getMyWorkspace(_id);
             setWorkspaces(myWorkspaces);
             setTimeout(() => navigate(`workspace/${data.addWorkspace._id}`));
         } else {

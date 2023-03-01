@@ -20,7 +20,7 @@ function Workspace() {
     const { pathname } = useLocation();
     const popup = searchParams.get('popup');
 
-    const { setWorkspaces, getWorkspaces } = useStore();
+    const { setWorkspaces, getWorkspaces, getUser } = useStore();
     const workspaces = getWorkspaces();
 
     const { showAlert, Alert } = useAlert();
@@ -35,7 +35,8 @@ function Workspace() {
             const data = await deleteWorkspace(selected._id);
 
             if (data.deleteWorkspace.type == 'SUCCESS') {
-                const { myWorkspaces } = await getMyWorkspace();
+                const { _id } = getUser();
+                const { myWorkspaces } = await getMyWorkspace(_id);
 
                 setWorkspaces(myWorkspaces);
                 if (myWorkspaces.length >= 1) {
