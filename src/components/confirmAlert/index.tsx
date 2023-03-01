@@ -14,7 +14,7 @@ interface IAlert extends IAlertProps {
 
 function Alert({ message, resolve, reject }: IAlertProps) {
     return (
-        <div className="flex items-center justify-center w-1/4 px-4 py-2 rounded-md text-white bg-warning fixed bottom-4 left-4 z-10">
+        <div className="flex items-center justify-center w-80 px-4 py-2 rounded-md text-white bg-warning fixed bottom-4 left-4 z-10">
             <p>{message}</p>
             <div className="flex">
                 <XMarkIcon

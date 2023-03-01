@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CodeBracketIcon, BellIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 import clsx from 'clsx';
 import styles from './Menu.module.scss';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 export default function Menu({ setHideMenu }: { setHideMenu: (arg0: boolean) => void }) {
-    const listMenu = [
+    const menus = [
         {
             id: '0',
             name: 'Dashboard',
@@ -26,8 +26,23 @@ export default function Menu({ setHideMenu }: { setHideMenu: (arg0: boolean) => 
         },
     ];
 
+    const [listMenu, setListMenu] = useState(menus);
     const { pathname } = useLocation();
     const [activeMenu, setActiveMenu] = useState(pathname);
+
+    const recentWorkspaceId = localStorage.getItem('recentWorkspaceId');
+    useEffect(() => {
+        setListMenu(
+            listMenu.map((menu) =>
+                menu.id !== '0'
+                    ? menu
+                    : {
+                          ...menu,
+                          path: `workspace/${recentWorkspaceId}`,
+                      },
+            ),
+        );
+    }, [recentWorkspaceId]);
 
     return (
         <div className="mt-8">

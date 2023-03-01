@@ -2,14 +2,13 @@ import { Fragment, useRef, useState, useEffect } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon, EllipsisHorizontalIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useParams, useNavigate, useLocation } from 'react-router-dom';
 
 import { deleteWorkspace, getMyWorkspace } from '~/services/apis/workspace';
 import { NewWorkSpaceForm, EditWorkspaceForm } from './components';
 import { useStore } from '~/store/hooks';
 import { useAlert, useConfirmAlert } from '~/components';
 import { useOutsideHandle } from '~/hooks';
-import { IWorkspace } from '~/interfaces';
 
 function Workspace() {
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -18,6 +17,7 @@ function Workspace() {
     const [searchParams, setSearchparams] = useSearchParams();
     const navigate = useNavigate();
     const { workspaceId } = useParams();
+    const { pathname } = useLocation();
     const popup = searchParams.get('popup');
 
     const { setWorkspaces, getWorkspaces } = useStore();
@@ -79,16 +79,19 @@ function Workspace() {
     }, [popup]);
 
     useEffect(() => {
-        if (workspaceId) {
-            const workspace = workspaces.find((e) => e._id === workspaceId);
-            if (workspace) {
-                setSelected(workspace);
+        if (pathname === '/' || pathname.includes('workspace')) {
+            if (workspaceId) {
+                const workspace = workspaces.find((e) => e._id === workspaceId);
+                if (workspace) {
+                    localStorage.setItem('recentWorkspaceId', workspaceId);
+                    setSelected(workspace);
+                } else {
+                    throw Error('Workspace not found');
+                }
             } else {
-                throw Error('Workspace not found');
-            }
-        } else {
-            if (workspaces.length > 0) {
-                navigate(`workspace/${workspaces[0]._id}`);
+                if (workspaces.length > 0) {
+                    navigate(`workspace/${workspaces[0]._id}`);
+                }
             }
         }
     }, [workspaceId, workspaces]);

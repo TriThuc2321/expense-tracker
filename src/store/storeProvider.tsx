@@ -19,8 +19,6 @@ const INIT_USER: IUser = {
     name: '',
     picture: '',
     email: '',
-    createdAt: '',
-    updatedAt: '',
 };
 
 const INIT_WORKSPACE: IWorkspace = {
@@ -29,8 +27,6 @@ const INIT_WORKSPACE: IWorkspace = {
     host: INIT_USER,
     bills: [],
     collaborators: [],
-    createdAt: '',
-    updatedAt: '',
 };
 
 const INIT_STATE: IStore = {

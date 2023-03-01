@@ -13,6 +13,7 @@ interface IPrice {
 
 export default function BillDetail(billDetail: IBill) {
     const navigate = useNavigate();
+
     const [prices, setPrices] = useState<IPrice>({
         total: 0,
         totalGeneral: 0,

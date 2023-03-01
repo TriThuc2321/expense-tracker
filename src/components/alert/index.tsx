@@ -27,7 +27,7 @@ function Alert({ message, alertType }: IAlertProps) {
                 'flex items-center justify-between w-80 px-4 py-2 rounded-md text-white fixed bottom-4 left-4',
             )}
         >
-            <p>{message}</p>
+            <p className="mr-2">{message}</p>
 
             {alertType == 'SUCCESS' ? (
                 <CheckCircleIcon className="w-5 h-5" />

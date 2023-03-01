@@ -47,6 +47,7 @@ export const graphQLRequest = async (payload: any, options = {}) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                mode: 'no-cors',
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
                 ...options,

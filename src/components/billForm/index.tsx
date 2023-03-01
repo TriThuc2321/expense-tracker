@@ -3,7 +3,7 @@ import moment from 'moment';
 import { TrashIcon, PlusIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
 
 import { IProduct, IBill, IUser } from '~/interfaces';
-import { Button } from '~/components';
+import { Button, useConfirmAlert } from '~/components';
 import { Listbox, Transition } from '@headlessui/react';
 import { useLoaderData, useParams, useNavigate } from 'react-router-dom';
 import { getCollaborators } from '~/services/apis/user';
@@ -17,6 +17,7 @@ export default function BillForm() {
     const { workspaceId } = useParams();
     const { getUser, setBills } = useStore();
     const navigate = useNavigate();
+    const { showConfirmAlert, ConfirmAlert } = useConfirmAlert();
 
     const [collaborators, setCollaborators] = useState<Array<IUser>>([]);
     const [generals, setGenerals] = useState<Array<IProduct>>(bill.generals);
@@ -39,11 +40,21 @@ export default function BillForm() {
     };
 
     const handleDeleteBill = async () => {
-        const data = await deleteBill(bill._id);
+        const resolve = async () => {
+            const data = await deleteBill(bill._id);
 
-        if (data) {
-            handleTurnBack();
-        }
+            if (data) {
+                handleTurnBack();
+            }
+        };
+
+        const reject = () => {};
+
+        showConfirmAlert({
+            message: 'Are you sure you want to delete this bill?',
+            reject,
+            resolve,
+        });
     };
 
     const handleDeleteProduct = async (productId: string) => {
@@ -74,6 +85,7 @@ export default function BillForm() {
 
     return (
         <div className="fixed top-0 bottom-0 left-0 right-0 tablet:py-10 tablet:px-20 desktop:py-20 desktop:px-60 text-primary z-10">
+            <ConfirmAlert />
             <div className="relative bg-white w-full h-full rounded-lg shadow-md py-4 px-6 tablet:p-10 overflow-y-auto">
                 <div className="flex justify-between">
                     <div className="flex flex-col">
