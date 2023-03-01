@@ -122,7 +122,6 @@ export default function EditWorkspaceForm({ workspace }: IEditWorkSpaceFormProps
                         />
                         <Button
                             text="Update"
-                            outline={false}
                             status={saveLoading ? 'LOADING' : 'ACTIVE'}
                             className="w-1/2 ml-2"
                             onClick={saveHandle}
@@ -148,7 +147,6 @@ export default function EditWorkspaceForm({ workspace }: IEditWorkSpaceFormProps
                         status={inviteLoading ? 'LOADING' : 'ACTIVE'}
                         onClick={inviteHandle}
                         className="ml-1"
-                        outline={false}
                     />
                 </div>
 

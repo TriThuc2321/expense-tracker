@@ -7,8 +7,6 @@ interface INewUser {
 
 interface IUser extends INewUser {
     _id: string;
-    createdAt: string;
-    updatedAt: string;
 }
 
 interface IWorkspace {
@@ -17,8 +15,6 @@ interface IWorkspace {
     host: IUser;
     collaborators: Array<IUser>;
     bills: Array<IBill>;
-    createdAt: string;
-    updatedAt: string;
 }
 
 interface IProduct {
@@ -26,8 +22,6 @@ interface IProduct {
     name: string;
     price: number;
     buyer: IUser;
-    createdAt: string;
-    updatedAt: string;
 }
 
 interface IBill {
@@ -36,7 +30,6 @@ interface IBill {
     generals: Array<IProduct>;
     specifics: Array<IProduct>;
     createdAt: string;
-    updatedAt: string;
 }
 
 interface IStore {

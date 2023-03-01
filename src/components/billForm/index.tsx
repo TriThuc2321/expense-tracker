@@ -9,6 +9,8 @@ import { useLoaderData, useParams, useNavigate } from 'react-router-dom';
 import { getCollaborators } from '~/services/apis/user';
 import { useStore } from '~/store/hooks';
 import { billsLoader, deleteBill } from '~/services/apis/bill';
+import { createProduct, deleteProduct, updateProduct } from '~/services/apis/product';
+import { useDebounce } from '~/hooks';
 
 export default function BillForm() {
     const { bill } = useLoaderData() as { bill: IBill };
@@ -20,21 +22,35 @@ export default function BillForm() {
     const [generals, setGenerals] = useState<Array<IProduct>>(bill.generals);
     const [specifics, setSpecifics] = useState<Array<IProduct>>(bill.specifics);
 
-    const addNewGeneral = () => {
-        // const _id = getUId();
-        // setGenerals([{ _id, name: '', price: 0 }, ...generals]);
+    const addNewGeneral = async () => {
+        const { _id } = getUser();
+        const { addProduct } = await createProduct(_id, bill._id, '', 0, 'GENERAL');
+        if (addProduct) {
+            setGenerals([addProduct, ...generals]);
+        }
     };
 
-    const addNewSpecific = () => {
-        // const _id = getUId();
-        // setSpecifics([{ _id, name: '', price: 0 }, ...specifics]);
+    const addNewSpecific = async () => {
+        const { _id } = getUser();
+        const { addProduct } = await createProduct(_id, bill._id, '', 0, 'SPECIFIC');
+        if (addProduct) {
+            setSpecifics([addProduct, ...specifics]);
+        }
     };
 
-    const handleDelete = async () => {
+    const handleDeleteBill = async () => {
         const data = await deleteBill(bill._id);
 
         if (data) {
             handleTurnBack();
+        }
+    };
+
+    const handleDeleteProduct = async (productId: string) => {
+        const data = await deleteProduct(productId);
+        if (data) {
+            setGenerals(generals.filter((e) => e._id !== productId));
+            setSpecifics(specifics.filter((e) => e._id !== productId));
         }
     };
 
@@ -69,14 +85,8 @@ export default function BillForm() {
                     </div>
 
                     <div className="hidden tablet:flex items-center">
-                        <Button text="Remove" outline status="ACTIVE" className="mr-4 " onClick={handleDelete} />
-                        <Button
-                            text="Cancel"
-                            outline={false}
-                            status="ACTIVE"
-                            className="mr-4"
-                            onClick={handleTurnBack}
-                        />
+                        <Button text="Remove" outline status="ACTIVE" className="mr-4 " onClick={handleDeleteBill} />
+                        <Button text="Close" status="ACTIVE" className="mr-4" onClick={handleTurnBack} />
                     </div>
                 </div>
 
@@ -89,10 +99,9 @@ export default function BillForm() {
                         {generals.map((product) => (
                             <ProductItem
                                 key={product._id}
-                                name={product.name}
-                                price={product.price}
-                                buyer={product.buyer}
+                                productProps={product}
                                 collaborators={collaborators}
+                                handleDeleteProduct={handleDeleteProduct}
                             />
                         ))}
                     </div>
@@ -106,17 +115,16 @@ export default function BillForm() {
                         {specifics.map((product) => (
                             <ProductItem
                                 key={product._id}
-                                name={product.name}
-                                price={product.price}
-                                buyer={product.buyer}
+                                productProps={product}
                                 collaborators={collaborators}
+                                handleDeleteProduct={handleDeleteProduct}
                             />
                         ))}
                     </div>
                 </div>
 
                 <div className="flex items-center fixed bottom-4 left-4 right-4 tablet:hidden">
-                    <Button text="Cancel" outline status="ACTIVE" className="mr-2 w-full" onClick={handleTurnBack} />
+                    <Button text="Close" outline status="ACTIVE" className="mr-2 w-full" onClick={handleTurnBack} />
                 </div>
             </div>
         </div>
@@ -124,15 +132,20 @@ export default function BillForm() {
 }
 
 type ProductItemProps = {
-    name: string;
-    price: number;
-    buyer: IUser;
+    productProps: IProduct;
     collaborators: Array<IUser>;
+    handleDeleteProduct: (productId: string) => void;
 };
 
-function ProductItem({ name, price, buyer, collaborators }: ProductItemProps) {
-    const [product, setProduct] = useState({ name, price });
-    const [selected, setSelected] = useState(buyer);
+function ProductItem({ productProps, collaborators, handleDeleteProduct }: ProductItemProps) {
+    const [product, setProduct] = useState(productProps);
+    const [selected, setSelected] = useState(productProps.buyer);
+
+    const productDebounce = useDebounce(product, 1000);
+
+    useEffect(() => {
+        updateProduct(product.buyer._id, product._id, product.name, product.price);
+    }, [productDebounce]);
 
     const nameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProduct({ ...product, name: e.target.value });
@@ -163,7 +176,7 @@ function ProductItem({ name, price, buyer, collaborators }: ProductItemProps) {
                     onChange={priceChange}
                 />
 
-                <TrashIcon className="h-5 w-5 m-1" />
+                <TrashIcon className="h-5 w-5 m-1" onClick={() => handleDeleteProduct(productProps._id)} />
             </div>
 
             <Listbox value={selected} onChange={setSelected}>

@@ -84,7 +84,7 @@ function Workspace() {
             if (workspace) {
                 setSelected(workspace);
             } else {
-                navigate('/');
+                throw Error('Workspace not found');
             }
         } else {
             if (workspaces.length > 0) {

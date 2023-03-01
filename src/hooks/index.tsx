@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-export const useOutsideHandle = (ref: React.RefObject<HTMLElement>, callback: () => void) => {
+function useOutsideHandle(ref: React.RefObject<HTMLElement>, callback: () => void) {
     useEffect(() => {
         const handleClickOutside = (event: any) => {
             if (ref.current && !ref.current.contains(event.target)) {
@@ -13,4 +13,20 @@ export const useOutsideHandle = (ref: React.RefObject<HTMLElement>, callback: ()
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [ref]);
-};
+}
+
+function useDebounce<T>(value: T, delay?: number): T {
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedValue(value), delay || 500);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+}
+
+export { useDebounce, useOutsideHandle };

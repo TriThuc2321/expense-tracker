@@ -24,7 +24,7 @@ export default function BillDetail(billDetail: IBill) {
         const totalSpecific = billDetail.specifics.reduce((total, currentValue) => total + currentValue.price, 0);
 
         setPrices({ totalGeneral, totalSpecific, total: totalGeneral + totalSpecific });
-    }, []);
+    }, [billDetail]);
 
     return (
         <div
