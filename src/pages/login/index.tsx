@@ -16,7 +16,7 @@ function Login() {
         const newUser = {
             name: displayName,
             uid,
-            email,
+            email: email ? email : '',
             picture: photoURL,
         };
 
