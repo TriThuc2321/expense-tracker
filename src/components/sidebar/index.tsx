@@ -21,7 +21,14 @@ export default function Sidebar() {
                 <Footer />
             </div>
 
-            <Bars3Icon className="fixed top-4 left-4" width={28} height={36} onClick={() => setHideMenu(false)} />
+            {hideMenu && (
+                <Bars3Icon
+                    className="fixed top-4 left-4 z-10"
+                    width={28}
+                    height={36}
+                    onClick={() => setHideMenu(false)}
+                />
+            )}
         </div>
     );
 }

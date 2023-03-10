@@ -570,8 +570,24 @@ video {
   top: 1rem;
 }
 
+.right-10 {
+  right: 2.5rem;
+}
+
+.right-6 {
+  right: 1.5rem;
+}
+
+.top-1 {
+  top: 0.25rem;
+}
+
 .z-10 {
   z-index: 10;
+}
+
+.z-20 {
+  z-index: 20;
 }
 
 .m-1 {
@@ -717,10 +733,6 @@ video {
   width: 33.333333%;
 }
 
-.w-1\/4 {
-  width: 25%;
-}
-
 .w-10 {
   width: 2.5rem;
 }
@@ -753,8 +765,8 @@ video {
   width: 100vw;
 }
 
-.w-96 {
-  width: 24rem;
+.w-60 {
+  width: 15rem;
 }
 
 .min-w-max {
@@ -844,6 +856,10 @@ video {
 
 .rounded-xl {
   border-radius: 0.75rem;
+}
+
+.rounded-sm {
+  border-radius: 0.125rem;
 }
 
 .border {

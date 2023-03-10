@@ -97,8 +97,8 @@ export default function BillForm() {
                     </div>
 
                     <div className="hidden tablet:flex items-center">
-                        <Button text="Remove" outline status="ACTIVE" className="mr-4 " onClick={handleDeleteBill} />
-                        <Button text="Close" status="ACTIVE" className="mr-4" onClick={handleTurnBack} />
+                        <Button text="Remove" outline className="mr-4 " onClick={handleDeleteBill} />
+                        <Button text="Close" className="mr-4" onClick={handleTurnBack} />
                     </div>
                 </div>
 
@@ -136,7 +136,8 @@ export default function BillForm() {
                 </div>
 
                 <div className="flex items-center fixed bottom-4 left-4 right-4 tablet:hidden">
-                    <Button text="Close" outline status="ACTIVE" className="mr-2 w-full" onClick={handleTurnBack} />
+                    <Button text="Remove" outline className="mr-2 w-full" onClick={handleDeleteBill} />
+                    <Button text="Close" className="mr-2 w-full" onClick={handleTurnBack} />
                 </div>
             </div>
         </div>

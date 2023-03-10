@@ -1,8 +1,13 @@
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import logo from '~/assets/logo.png';
 import { useStore } from '~/store/hooks';
+import { Notification } from '~/components';
 
-function Header({ setHideMenu }: { setHideMenu: (arg0: boolean) => void }) {
+interface IHeaderProps {
+    setHideMenu: (arg0: boolean) => void;
+}
+
+function Header({ setHideMenu }: IHeaderProps) {
     const { getUser } = useStore();
     const user = getUser();
 
@@ -26,9 +31,13 @@ function Header({ setHideMenu }: { setHideMenu: (arg0: boolean) => void }) {
                 />
             </div>
 
-            <div className="flex mt-2">
-                <img src={user.picture || ''} className="h-6 w-6 rounded-full mr-2" />
-                <p>{user.name}</p>
+            <div className="flex mt-2 justify-between">
+                <div className="flex">
+                    <img src={user.picture || ''} className="h-6 w-6 rounded-full mr-2" />
+                    <p>{user.name}</p>
+                </div>
+
+                <Notification />
             </div>
         </div>
     );

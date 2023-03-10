@@ -1,4 +1,4 @@
-import { BASE_URL, BASE_URL_GRAPHQL } from '~/constants';
+import { BASE_URL, BASE_URL_GRAPHQL } from '~/services/constants';
 
 export const METHODS = {
     GET: 'GET',

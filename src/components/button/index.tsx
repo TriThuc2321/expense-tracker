@@ -6,7 +6,7 @@ import DotSpinner from '../dotSpinner';
 interface Props {
     text: string;
     outline?: boolean | null;
-    status: 'ACTIVE' | 'LOADING' | 'DISABLE';
+    status?: 'ACTIVE' | 'LOADING' | 'DISABLE';
     className?: string | null;
     onClick: () => void;
     children?: React.ReactNode;

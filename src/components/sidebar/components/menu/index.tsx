@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
-import { CodeBracketIcon, BellIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { CodeBracketIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 import clsx from 'clsx';
 import styles from './Menu.module.scss';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-export default function Menu({ setHideMenu }: { setHideMenu: (arg0: boolean) => void }) {
+import { Link, useLocation } from 'react-router-dom';
+
+interface IMenuProps {
+    setHideMenu: (arg0: boolean) => void;
+}
+
+export default function Menu({ setHideMenu }: IMenuProps) {
     const menus = [
         {
             id: '0',
@@ -14,12 +19,6 @@ export default function Menu({ setHideMenu }: { setHideMenu: (arg0: boolean) => 
         },
         {
             id: '1',
-            name: 'Notification',
-            path: '/notification',
-            icon: <BellIcon className="h-6 w-6" />,
-        },
-        {
-            id: '2',
             name: 'Statistic',
             path: '/statistic',
             icon: <ChartBarIcon className="h-6 w-6" />,
