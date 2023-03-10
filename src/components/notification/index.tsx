@@ -32,7 +32,7 @@ export default function Notification() {
                 setHasNewNoti(true);
             };
 
-            await new Promise((resolve, reject) => {
+            const result = await new Promise((resolve, reject) => {
                 client.subscribe(
                     {
                         query,
@@ -40,7 +40,7 @@ export default function Notification() {
                     {
                         next: onNext,
                         error: reject,
-                        complete: resolve,
+                        complete: () => resolve(result),
                     },
                 );
             });

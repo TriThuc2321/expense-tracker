@@ -23,7 +23,7 @@ export default function Sidebar() {
 
             {hideMenu && (
                 <Bars3Icon
-                    className="fixed top-4 left-4 z-10"
+                    className="fixed top-4 left-4 z-10 tablet:hidden"
                     width={28}
                     height={36}
                     onClick={() => setHideMenu(false)}
