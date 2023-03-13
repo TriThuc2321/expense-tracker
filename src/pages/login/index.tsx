@@ -1,9 +1,10 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 
 import { addNewUser } from '~/services/apis/user';
 
 function Login() {
+    const navigate = useNavigate();
     if (localStorage.getItem('accessToken')) {
         return <Navigate to="/" />;
     }
@@ -25,6 +26,7 @@ function Login() {
         };
 
         addNewUser(newUser);
+        navigate('/');
     };
 
     return (
